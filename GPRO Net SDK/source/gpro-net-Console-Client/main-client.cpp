@@ -28,12 +28,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "RakNet/BitStream.h"
+#include "RakNet/RakNetTypes.h" // MessageID
 
 #include "RakNet/RakPeerInterface.h"
 #include "RakNet/MessageIdentifiers.h"
 
 #define MAX_CLIENTS 10
 #define SERVER_PORT 60000
+
+enum GameMessages
+{
+	ID_GAME_MESSAGE_1 = ID_USER_PACKET_ENUM + 1
+};
 
 int main(int const argc, char const* const argv[])
 {
@@ -46,7 +53,7 @@ int main(int const argc, char const* const argv[])
 	isServer = false;
 
 	printf("Starting the client.\n");
-	peer->Connect("172.16.2.66:4024", SERVER_PORT, 0, 0);
+	peer->Connect("172.16.2.64:4024", SERVER_PORT, 0, 0);
 
 	while (1)
 	{
@@ -64,9 +71,15 @@ int main(int const argc, char const* const argv[])
 				printf("Another client has connected.\n");
 				break;
 			case ID_CONNECTION_REQUEST_ACCEPTED:
-				printf("Our connection request has been accepted.\n");
+			{	printf("Our connection request has been accepted.\n");
 
-				break;
+			// use a bitstream to write a custom user message
+			RakNet::BitStream bsOut;
+			bsOut.Write((RakNet::MessageID)ID_GAME_MESSAGE_1);
+			bsOut.Write("Hello World!");
+			peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+			}
+			break;
 			case ID_NEW_INCOMING_CONNECTION:
 				printf("A connection is incoming.\n");
 				break;
@@ -89,12 +102,14 @@ int main(int const argc, char const* const argv[])
 					printf("Connection lost.\n");
 				}
 				break;
-				/*case ID_GAME_MESSAGE_1:
-				{
-				RakNeT::RakString rs;
-				RakNet::BitStream bsIn(packet->data,packet->length,false);
-				}
-				break;*/
+			case ID_GAME_MESSAGE_1:
+			{
+				RakNet::RakString rs;
+				RakNet::BitStream bsIn(packet->data, packet->length, false);
+				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
+				bsIn.Read(rs);
+				printf("%s\n", rs.C_String());
+			}
 			default:
 				printf("Message with identifier %i has arrived.\n", packet->data[0]);
 				break;
