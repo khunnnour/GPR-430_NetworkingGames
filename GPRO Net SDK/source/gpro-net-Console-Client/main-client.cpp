@@ -25,17 +25,18 @@
 #include "gpro-net/gpro-net.h"
 
 
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
+
 #include "RakNet/BitStream.h"
 #include "RakNet/RakNetTypes.h" // MessageID
-
 #include "RakNet/RakPeerInterface.h"
 #include "RakNet/MessageIdentifiers.h"
 
 #define MAX_CLIENTS 10
-#define SERVER_PORT 60000
+#define SERVER_PORT 7777
 
 enum GameMessages
 {
@@ -71,13 +72,19 @@ int main(int const argc, char const* const argv[])
 				printf("Another client has connected.\n");
 				break;
 			case ID_CONNECTION_REQUEST_ACCEPTED:
-			{	printf("Our connection request has been accepted.\n");
+			{	
+				printf("Our connection request has been accepted.\n");
 
-			// use a bitstream to write a custom user message
-			RakNet::BitStream bsOut;
-			bsOut.Write((RakNet::MessageID)ID_GAME_MESSAGE_1);
-			bsOut.Write("Hello World!");
-			peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+				// use a bitstream to write a custom user message
+				RakNet::BitStream bsOut;
+				bsOut.Write((RakNet::MessageID)ID_GAME_MESSAGE_1);
+				//bsOut.Write((RakNet::Time)RakNet::GetTime());
+				//std::string str;
+				//std::getline(std::cin, str);
+				//RakNet::RakString rakStr(str.c_str());
+				//bsOut.Write(rakStr);
+				bsOut.Write("I'm here now");
+				peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 			}
 			break;
 			case ID_NEW_INCOMING_CONNECTION:
