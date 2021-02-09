@@ -25,17 +25,19 @@
 #include "gpro-net/gpro-net.h"
 
 
+// C++ Libraries
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string>
-
+#include <string.h>
+// RakNet Libraries
 #include "RakNet/BitStream.h"
 #include "RakNet/RakNetTypes.h" // MessageID
+#include "RakNet/GetTime.h"
 #include "RakNet/RakPeerInterface.h"
 #include "RakNet/MessageIdentifiers.h"
 
-#define MAX_CLIENTS 10
+// Defines
 #define SERVER_PORT 7777
 
 enum GameMessages
@@ -54,7 +56,7 @@ int main(int const argc, char const* const argv[])
 	isServer = false;
 
 	printf("Starting the client.\n");
-	peer->Connect("172.16.2.64:4024", SERVER_PORT, 0, 0);
+	peer->Connect("172.16.2.61:4024", SERVER_PORT, 0, 0);
 
 	while (1)
 	{
@@ -113,10 +115,20 @@ int main(int const argc, char const* const argv[])
 			{
 				RakNet::RakString rs;
 				RakNet::BitStream bsIn(packet->data, packet->length, false);
+				
+				// ignore message id
 				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
+				
+				// read in time
+				RakNet::Time inTime;
+				bsIn.Read(inTime);
+				
+				// read in the message
 				bsIn.Read(rs);
-				printf("%s\n", rs.C_String());
+				
+				printf("%d >  %s\n", (int)inTime, rs.C_String());
 			}
+			break;
 			default:
 				printf("Message with identifier %i has arrived.\n", packet->data[0]);
 				break;

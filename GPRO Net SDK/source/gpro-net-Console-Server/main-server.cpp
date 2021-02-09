@@ -24,16 +24,19 @@
 
 #include "gpro-net/gpro-net.h"
 
-
+// C++ Libraries
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+// RakNet Libraries
 #include "RakNet/BitStream.h"
 #include "RakNet/RakNetTypes.h" // MessageID
+#include "RakNet/GetTime.h"
 #include "RakNet/RakPeerInterface.h"
 #include "RakNet/MessageIdentifiers.h"
 
+// Defines
 #define MAX_CLIENTS 10
 #define SERVER_PORT 7777
 
@@ -44,8 +47,6 @@ enum GameMessages
 
 int main(int const argc, char const* const argv[])
 {
-	//char str[512]
-
 	RakNet::RakPeerInterface* peer = RakNet::RakPeerInterface::GetInstance();
 	bool isServer;
 	RakNet::Packet* packet;
@@ -95,6 +96,8 @@ int main(int const argc, char const* const argv[])
 				printf("A connection is incoming.\n");
 				RakNet::BitStream bsOut;
 				bsOut.Write((RakNet::MessageID)ID_GAME_MESSAGE_1);
+				bsOut.Write(RakNet::GetTime());
+				RakNet::Time t = RakNet::GetTime();
 				bsOut.Write("Welcome to the server");
 				peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 			}
