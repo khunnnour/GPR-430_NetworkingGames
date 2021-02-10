@@ -22,6 +22,13 @@
 	Main include for framework.
 */
 
+/* *
+ * PACKET DATA ORDER (^ = required):
+ * TIMESTAMP^
+ * USER^
+ * OTHER DATA
+ * */
+
 #ifndef _GPRO_NET_H_
 #define _GPRO_NET_H_
 

@@ -40,6 +40,9 @@
 // Defines
 #define SERVER_PORT 7777
 
+// prototypes
+// TODO: send server message proto
+
 enum GameMessages
 {
 	ID_GAME_MESSAGE_1 = ID_USER_PACKET_ENUM + 1
@@ -60,6 +63,8 @@ int main(int const argc, char const* const argv[])
 
 	while (1)
 	{
+		// TODO: add for button presses to ask for input
+
 		for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 		{
 			switch (packet->data[0])
