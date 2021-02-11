@@ -100,6 +100,17 @@ int main(int const argc, char const* const argv[])
 
 					peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, sysAdd, false);
 				}
+				else if (str == "/u")
+				{
+					RakNet::BitStream bsOut;
+					// write mId and timestamp to bitstream
+					bsOut.Write((RakNet::MessageID)ID_USER_LIST_REQUEST);
+					bsOut.Write(RakNet::GetTime());
+					// write username to the bitstream
+					bsOut.Write(username);
+
+					peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, sysAdd, false);
+				}
 				else 
 				{
 					RakNet::BitStream bsOut;
@@ -198,7 +209,7 @@ int main(int const argc, char const* const argv[])
 				RakNet::RakString rs;
 				RakNet::BitStream bsIn(packet->data, packet->length, false);
 
-				// - recieve welcome message - //
+				// - recieve private message - //
 				// ignore message id
 				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
 
@@ -221,7 +232,7 @@ int main(int const argc, char const* const argv[])
 				RakNet::RakString rs;
 				RakNet::BitStream bsIn(packet->data, packet->length, false);
 
-				// - recieve welcome message - //
+				// - recieve public message - //
 				// ignore message id
 				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
 
@@ -237,6 +248,25 @@ int main(int const argc, char const* const argv[])
 				bsIn.Read(rs);
 
 				printf("%d > %s: %s\n", (int)inTime, user.C_String(), rs.C_String());
+			}
+			break;
+			case ID_USER_LIST_REQUEST:
+			{
+				RakNet::RakString rs;
+				RakNet::BitStream bsIn(packet->data, packet->length, false);
+
+				// - recieve user list message - //
+				// ignore message id
+				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
+
+				// read in time
+				RakNet::Time inTime;
+				bsIn.Read(inTime);
+
+				// read in the message
+				bsIn.Read(rs);
+
+				printf("%d > %s\n", (int)inTime,  rs.C_String());
 			}
 			break;
 			default:
