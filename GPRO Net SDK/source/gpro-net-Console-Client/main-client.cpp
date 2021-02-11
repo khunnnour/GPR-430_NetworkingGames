@@ -62,8 +62,8 @@ int main(int const argc, char const* const argv[])
 	isServer = false;
 
 	printf("Starting the client.\n");
-	peer->Connect("172.16.2.62:4024", SERVER_PORT, 0, 0);
-	RakNet::SystemAddress sysAdd = RakNet::SystemAddress("172.16.2.62:4024", SERVER_PORT);
+	peer->Connect("172.16.2.57:4024", SERVER_PORT, 0, 0);
+	RakNet::SystemAddress sysAdd = RakNet::SystemAddress("172.16.2.57:4024", SERVER_PORT);
 
 	while (1)
 	{

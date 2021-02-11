@@ -165,7 +165,7 @@ int main(int const argc, char const* const argv[])
 				connectionMade(connectedClients, packet);
 			}
 			break;
-			case ID_SEND_NEW_MESSAGE:
+			case ID_SEND_PUBLIC_MESSAGE:
 			{
 				// read in all of the data
 				RakNet::BitStream bsIn(packet->data, packet->length, false);
@@ -188,7 +188,56 @@ int main(int const argc, char const* const argv[])
 				messLogFile << mess.C_String() << "\n";
 
 				// print message to server console
-				printf("%d | %s sent message: %s\n", (int)inTime, user.C_String(), mess.C_String());
+				printf("%d | %s => ALL: %s\n", (int)inTime, user.C_String(), mess.C_String());
+
+				// TODO: Add public message broadcasting
+			}
+			break;
+			case ID_SEND_PRIVATE_MESSAGE:
+			{
+				// read in all of the data
+				RakNet::BitStream bsIn(packet->data, packet->length, false);
+
+				// ignore message id
+				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
+
+				// read in time
+				RakNet::Time inTime;
+				bsIn.Read(inTime);
+
+				// read in the sending user
+				RakNet::RakString user;
+				bsIn.Read(user);
+
+				// read in the target user
+				RakNet::RakString targUser;
+				bsIn.Read(targUser);
+
+				// read in the message
+				RakNet::RakString mess;
+				bsIn.Read(targUser);
+
+				// log message
+				//messLogFile << mess.C_String() << "\n";
+
+				// print message to server console
+				printf("%d | %s => %s: %s\n", (int)inTime, user.C_String(), targUser.C_String(), mess.C_String());
+
+									// get the target
+				int tUIndex = findClient(connectedClients, targUser);
+
+				if (tUIndex != -1)
+				{
+					// send message to intended recipient
+					RakNet::SystemAddress sA = RakNet::SystemAddress(connectedClients[tUIndex].address.ToString(), SERVER_PORT);
+
+					RakNet::BitStream bsOut;
+					bsOut.Write((RakNet::MessageID)ID_SEND_PRIVATE_MESSAGE);
+					bsOut.Write(RakNet::GetTime());
+					bsOut.Write(user);
+					bsOut.Write(mess);
+					peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, sA, false);
+				}
 			}
 			break;
 			default:
