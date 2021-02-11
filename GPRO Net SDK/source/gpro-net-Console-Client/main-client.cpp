@@ -81,7 +81,7 @@ int main(int const argc, char const* const argv[])
 				{
 					RakNet::BitStream bsOut;
 					// write mId and timestamp to bitstream
-					bsOut.Write((RakNet::MessageID)ID_SEND_NEW_MESSAGE);
+					bsOut.Write((RakNet::MessageID)ID_SEND_PRIVATE_MESSAGE);
 					bsOut.Write(RakNet::GetTime());
 					// write username to the bitstream
 					bsOut.Write(username);
@@ -94,7 +94,7 @@ int main(int const argc, char const* const argv[])
 				{
 					RakNet::BitStream bsOut;
 					// write mId and timestamp to bitstream
-					bsOut.Write((RakNet::MessageID)ID_SEND_NEW_MESSAGE);
+					bsOut.Write((RakNet::MessageID)ID_SEND_PUBLIC_MESSAGE);
 					bsOut.Write(RakNet::GetTime());
 					// write username to the bitstream
 					bsOut.Write(username);
@@ -181,6 +181,29 @@ int main(int const argc, char const* const argv[])
 				bsIn.Read(rs);
 				
 				printf("%d >  %s\n", (int)inTime, rs.C_String());
+			}
+			break;
+			case ID_SEND_PRIVATE_MESSAGE:
+			{
+				RakNet::RakString rs;
+				RakNet::BitStream bsIn(packet->data, packet->length, false);
+
+				// - recieve welcome message - //
+				// ignore message id
+				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
+
+				// read in time
+				RakNet::Time inTime;
+				bsIn.Read(inTime);
+
+				// read in username
+				RakNet::RakString user;
+				bsIn.Read(user);
+
+				// read in the message
+				bsIn.Read(rs);
+
+				printf("%d > %s: %s\n", (int)inTime, user.C_String(), rs.C_String());
 			}
 			break;
 			default:
