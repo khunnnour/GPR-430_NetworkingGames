@@ -85,8 +85,18 @@ int main(int const argc, char const* const argv[])
 					bsOut.Write(RakNet::GetTime());
 					// write username to the bitstream
 					bsOut.Write(username);
-					// write message to bitstream
-					bsOut.Write(str.c_str());
+
+					// get target username
+					std::string tUser;
+					printf("Send to: ");
+					std::getline(std::cin, tUser);
+					bsOut.Write(tUser.c_str());
+
+					// get message
+					std::string mess;
+					printf("Send what to %s: ", tUser.c_str());
+					std::getline(std::cin, mess);
+					bsOut.Write(mess.c_str());
 
 					peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, sysAdd, false);
 				}
