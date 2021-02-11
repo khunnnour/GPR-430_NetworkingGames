@@ -24,6 +24,7 @@
 
 /* *
  * PACKET DATA ORDER (^ = required):
+ * MESSAGE_ID^
  * TIMESTAMP^
  * USER^
  * OTHER DATA
@@ -32,6 +33,13 @@
 #ifndef _GPRO_NET_H_
 #define _GPRO_NET_H_
 
+#include "RakNet/MessageIdentifiers.h"
 
+enum GameMessages
+{
+	ID_WELCOME_MESSAGE = ID_USER_PACKET_ENUM + 1,
+	ID_LOGIN_MESSAGE,
+	ID_SEND_NEW_MESSAGE
+};
 
 #endif	// !_GPRO_NET_H_

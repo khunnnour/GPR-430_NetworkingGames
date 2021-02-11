@@ -25,41 +25,43 @@
 #include "gpro-net/gpro-net.h"
 
 // C++ Libraries
+#include <Windows.h>
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <vector>
 // RakNet Libraries
 #include "RakNet/BitStream.h"
 #include "RakNet/RakNetTypes.h" // MessageID
 #include "RakNet/GetTime.h"
 #include "RakNet/RakPeerInterface.h"
-#include "RakNet/MessageIdentifiers.h"
 
 // Defines
 #define MAX_CLIENTS 10
 #define SERVER_PORT 7777
+
+// client struct
+struct client {
+	RakNet::RakString name;
+	RakNet::SystemAddress address;
+};
 
 // protos
 void connectionMade(std::vector<client>& c,RakNet::Packet* p);
 void connectionLost(std::vector<client>& c,RakNet::Packet* p);
 int findClient(std::vector<client>& c,RakNet::RakString u);
 
-struct client {
-	RakNet::RakString name;
-	RakNet::RakString ip;
-};
-
-enum GameMessages
-{
-	ID_GAME_MESSAGE_1=ID_USER_PACKET_ENUM+1
-};
-
 int main(int const argc, char const* const argv[])
 {
+	// -- Start-Up -- //
+	printf("Starting the server.\n");
+
+	// vector for connected clients
 	std::vector<client> connectedClients;
 
+	// set up peer stuff
 	RakNet::RakPeerInterface* peer = RakNet::RakPeerInterface::GetInstance();
 	bool isServer = true;
 	RakNet::Packet* packet;
@@ -67,12 +69,29 @@ int main(int const argc, char const* const argv[])
 	RakNet::SocketDescriptor sd(SERVER_PORT, 0);
 	peer->Startup(MAX_CLIENTS, &sd, 1);
 
-	printf("Starting the server.\n");
+	// set up log file
+	std::ofstream messLogFile("messages.txt", std::ios::out);
+	if (!messLogFile.is_open())
+		printf("!! ERROR !! File not found\n\n");
+	else
+		messLogFile.write("START => \n",10);
+
 	// We need to let the server accept incoming connections from the clients
 	peer->SetMaximumIncomingConnections(MAX_CLIENTS);
 
 	while (1)
 	{
+		// if 'q' is pressed break from loop
+		printf("Command: ");
+		std::string str;
+		std::getline(std::cin, str);
+		// send the user message if not empty string
+		if (str == "q")
+		{
+			printf("Quitting...");
+			break;
+		}
+
 		for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 		{
 			switch (packet->data[0])
@@ -92,15 +111,14 @@ int main(int const argc, char const* const argv[])
 			case ID_CONNECTION_REQUEST_ACCEPTED:
 			{
 				printf("Our connection request has been accepted.\n");
-
 				// use a bitstream to write a custom user message
-				RakNet::BitStream bsOut;
+				/*RakNet::BitStream bsOut;
 				bsOut.Write((RakNet::MessageID)ID_GAME_MESSAGE_1);
 				char str[32];
-				std::cin >> str;
+				//std::cin >> str;
 				RakNet::RakString rakStr(str);
 				bsOut.Write(rakStr);
-				peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+				peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);*/
 			}
 			break;
 			case ID_NEW_INCOMING_CONNECTION:
@@ -109,14 +127,10 @@ int main(int const argc, char const* const argv[])
 
 				// send welcome message to new client
 				RakNet::BitStream bsOut;
-				bsOut.Write((RakNet::MessageID)ID_GAME_MESSAGE_1);
+				bsOut.Write((RakNet::MessageID)ID_WELCOME_MESSAGE);
 				bsOut.Write(RakNet::GetTime());
-				RakNet::Time t = RakNet::GetTime();
 				bsOut.Write("Welcome to the server");
 				peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
-
-				// update connections
-				connectionMade(connectedClients, packet);
 			}
 			break;
 			case ID_NO_FREE_INCOMING_CONNECTIONS:
@@ -136,13 +150,45 @@ int main(int const argc, char const* const argv[])
 					printf("Connection lost.\n");
 				}
 				break;
-			case ID_GAME_MESSAGE_1:
+			case ID_WELCOME_MESSAGE:
 			{
 				RakNet::RakString rs;
 				RakNet::BitStream bsIn(packet->data, packet->length, false);
 				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
 				bsIn.Read(rs);
 				printf("Message: %s\n", rs.C_String());
+			}
+			break;
+			case ID_LOGIN_MESSAGE:
+			{
+				// update connections
+				connectionMade(connectedClients, packet);
+			}
+			break;
+			case ID_SEND_NEW_MESSAGE:
+			{
+				// read in all of the data
+				RakNet::BitStream bsIn(packet->data, packet->length, false);
+
+				// ignore message id
+				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
+
+				// read in time
+				RakNet::Time inTime;
+				bsIn.Read(inTime);
+
+				// read in the user
+				RakNet::RakString user;
+				bsIn.Read(user);
+
+				RakNet::RakString mess;
+				bsIn.Read(mess);
+
+				// log message
+				messLogFile << mess.C_String() << "\n";
+
+				// print message to server console
+				printf("%d | %s sent message: %s\n", (int)inTime, user.C_String(), mess.C_String());
 			}
 			break;
 			default:
@@ -152,6 +198,8 @@ int main(int const argc, char const* const argv[])
 		}
 	}
 
+	messLogFile << "\n";
+	messLogFile.close();
 	RakNet::RakPeerInterface::DestroyInstance(peer);
 
 	printf("\n\n");
@@ -166,7 +214,7 @@ int main(int const argc, char const* const argv[])
 /// </summary>
 /// <param name="c">the list of connected clients</param>
 /// <param name="p">packet to be processed</param>
-void connectionMade(std::vector<client>& c,RakNet::Packet* p)
+void connectionMade(std::vector<client>& c, RakNet::Packet* p)
 {
 	// read in all of the data
 	RakNet::BitStream bsIn(p->data, p->length, false);
@@ -180,7 +228,7 @@ void connectionMade(std::vector<client>& c,RakNet::Packet* p)
 
 	// read in the user
 	RakNet::RakString user;
-	bsIn.Read(rs);
+	bsIn.Read(user);
 
 	// print message to server console
 	printf("%d | %s has connected.\n", (int)inTime, user.C_String());
@@ -188,7 +236,8 @@ void connectionMade(std::vector<client>& c,RakNet::Packet* p)
 	// create a new client
 	client newClient;
 	newClient.name = user;
-	newClient.ip = p->systemAddress;
+	newClient.address = p->systemAddress;
+
 	// add to client vector
 	c.push_back(newClient);
 }
@@ -211,7 +260,7 @@ void connectionLost(std::vector<client>& c, RakNet::Packet* p)
 
 	// read in the user
 	RakNet::RakString user;
-	bsIn.Read(rs);
+	bsIn.Read(user);
 
 	// print message to server console
 	printf("%d | %s has disconnected.\n", (int)inTime, user.C_String());
