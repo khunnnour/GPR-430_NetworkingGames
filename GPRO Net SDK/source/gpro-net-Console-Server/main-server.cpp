@@ -68,16 +68,17 @@ int main(int const argc, char const* const argv[])
 
 	RakNet::SocketDescriptor sd(SERVER_PORT, 0);
 	peer->Startup(MAX_CLIENTS, &sd, 1);
+	// We need to let the server accept incoming connections from the clients
+	peer->SetMaximumIncomingConnections(MAX_CLIENTS);
 
 	// set up log file
-	std::ofstream messLogFile("messages.txt", std::ios::out);
+	std::ofstream messLogFile;
+	messLogFile.open("messages.txt",std::ios::app);
+
 	if (!messLogFile.is_open())
 		printf("!! ERROR !! File not found\n\n");
 	else
-		messLogFile.write("START => \n",10);
-
-	// We need to let the server accept incoming connections from the clients
-	peer->SetMaximumIncomingConnections(MAX_CLIENTS);
+		messLogFile << "START => \n";
 
 	while (1)
 	{
@@ -88,7 +89,6 @@ int main(int const argc, char const* const argv[])
 		// send the user message if not empty string
 		if (str == "q")
 		{
-			printf("Quitting...");
 			break;
 		}
 
@@ -185,12 +185,18 @@ int main(int const argc, char const* const argv[])
 				bsIn.Read(mess);
 
 				// log message
-				messLogFile << mess.C_String() << "\n";
+				messLogFile << (int)inTime << " - " << mess << "\n";
 
 				// print message to server console
 				printf("%d | %s => ALL: %s\n", (int)inTime, user.C_String(), mess.C_String());
 
-				// TODO: Add public message broadcasting
+				// send message to intended recipient
+				RakNet::BitStream bsOut;
+				bsOut.Write((RakNet::MessageID)ID_SEND_PUBLIC_MESSAGE);
+				bsOut.Write(inTime);
+				bsOut.Write(user);
+				bsOut.Write(mess);
+				peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, true);
 			}
 			break;
 			case ID_SEND_PRIVATE_MESSAGE:
@@ -215,29 +221,53 @@ int main(int const argc, char const* const argv[])
 
 				// read in the message
 				RakNet::RakString mess;
-				bsIn.Read(targUser);
+				bsIn.Read(mess);
 
 				// log message
-				//messLogFile << mess.C_String() << "\n";
+				messLogFile << (int)inTime << " - " << mess << "\n";
 
 				// print message to server console
 				printf("%d | %s => %s: %s\n", (int)inTime, user.C_String(), targUser.C_String(), mess.C_String());
 
-									// get the target
+				// get the target
 				int tUIndex = findClient(connectedClients, targUser);
+				printf("Sending message to client #%d; ", tUIndex);
 
 				if (tUIndex != -1)
 				{
 					// send message to intended recipient
-					RakNet::SystemAddress sA = RakNet::SystemAddress(connectedClients[tUIndex].address.ToString(), SERVER_PORT);
-
 					RakNet::BitStream bsOut;
 					bsOut.Write((RakNet::MessageID)ID_SEND_PRIVATE_MESSAGE);
 					bsOut.Write(RakNet::GetTime());
 					bsOut.Write(user);
 					bsOut.Write(mess);
-					peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, sA, false);
+					printf("Send code: %u\n",peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, connectedClients[tUIndex].address, false));
 				}
+				else {
+					printf("User not connected\n");
+				}
+			}
+			break;
+			case ID_USER_LIST_REQUEST:
+			{
+				// send list of users online
+				RakNet::BitStream bsOut;
+				bsOut.Write((RakNet::MessageID)ID_USER_LIST_REQUEST);
+				bsOut.Write(RakNet::GetTime());
+
+				// start with first client
+				RakNet::RakString users = connectedClients[0].name;
+				// then ad every other one
+				for (int i = 1; i < connectedClients.size(); i++)
+				{
+					users += ", " + connectedClients[i].name;
+				}
+				// write to bitstream
+				bsOut.Write(users);
+
+				peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+
+				printf("A connection is incoming.\n");
 			}
 			break;
 			default:
@@ -249,9 +279,10 @@ int main(int const argc, char const* const argv[])
 
 	messLogFile << "\n";
 	messLogFile.close();
+	peer->Shutdown(5);
 	RakNet::RakPeerInterface::DestroyInstance(peer);
 
-	printf("\n\n");
+	printf("\n\nQuitting...\n\n");
 	system("pause");
 }
 

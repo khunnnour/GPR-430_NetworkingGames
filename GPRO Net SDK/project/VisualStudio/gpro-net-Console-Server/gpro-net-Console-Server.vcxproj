@@ -21,9 +21,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\source\gpro-net-Console-Server\main-server.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="messages.txt" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
