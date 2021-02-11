@@ -62,8 +62,8 @@ int main(int const argc, char const* const argv[])
 	isServer = false;
 
 	printf("Starting the client.\n");
-	peer->Connect("172.16.2.62:4024", SERVER_PORT, 0, 0);
-	RakNet::SystemAddress sysAdd = RakNet::SystemAddress("172.16.2.62:4024", SERVER_PORT);
+	peer->Connect("172.16.2.57:4024", SERVER_PORT, 0, 0);
+	RakNet::SystemAddress sysAdd = RakNet::SystemAddress("172.16.2.57:4024", SERVER_PORT);
 
 	while (1)
 	{
@@ -77,16 +77,32 @@ int main(int const argc, char const* const argv[])
 			// send the user message if not empty string
 			if (str != "")
 			{
-				RakNet::BitStream bsOut;
-				// write mId and timestamp to bitstream
-				bsOut.Write((RakNet::MessageID)ID_SEND_NEW_MESSAGE);
-				bsOut.Write(RakNet::GetTime());
-				// write username to the bitstream
-				bsOut.Write(username);
-				// write message to bitstream
-				bsOut.Write(str.c_str());
+				if (str == "/d") 
+				{
+					RakNet::BitStream bsOut;
+					// write mId and timestamp to bitstream
+					bsOut.Write((RakNet::MessageID)ID_SEND_NEW_MESSAGE);
+					bsOut.Write(RakNet::GetTime());
+					// write username to the bitstream
+					bsOut.Write(username);
+					// write message to bitstream
+					bsOut.Write(str.c_str());
 
-				peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, sysAdd, false);
+					peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, sysAdd, false);
+				}
+				else 
+				{
+					RakNet::BitStream bsOut;
+					// write mId and timestamp to bitstream
+					bsOut.Write((RakNet::MessageID)ID_SEND_NEW_MESSAGE);
+					bsOut.Write(RakNet::GetTime());
+					// write username to the bitstream
+					bsOut.Write(username);
+					// write message to bitstream
+					bsOut.Write(str.c_str());
+
+					peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, sysAdd, false);
+				}
 			}
 		}
 
