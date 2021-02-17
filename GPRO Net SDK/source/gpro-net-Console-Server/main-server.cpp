@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
+
 // RakNet Libraries
 #include "RakNet/BitStream.h"
 #include "RakNet/RakNetTypes.h" // MessageID
@@ -41,6 +42,7 @@
 // Defines
 #define MAX_CLIENTS 10
 #define SERVER_PORT 7777
+#define MAX_GAME_ROOM 5
 
 // client struct
 struct client {
@@ -82,15 +84,19 @@ int main(int const argc, char const* const argv[])
 
 	while (1)
 	{
-		// if 'q' is pressed break from loop
-		printf("Command: ");
-		std::string str;
-		std::getline(std::cin, str);
-		// send the user message if not empty string
-		if (str == "q")
+		// if 'T' is pressed wait for input
+		if ((int)GetAsyncKeyState(VK_RCONTROL) != 0)
 		{
-			break;
+			printf("Command: ");
+			std::string str;
+			std::getline(std::cin, str);
+			// if input is 'q' then break form loop (quit)
+			if (str == "q")
+			{
+				break;
+			}
 		}
+
 
 		for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 		{
@@ -285,9 +291,6 @@ int main(int const argc, char const* const argv[])
 	printf("\n\nQuitting...\n\n");
 	system("pause");
 }
-
-// TODO: implement message distro function
-// TODO: >> implement message logging
 
 /// <summary>
 /// Updates the list of connections when ID_NEW_INCOMING_CONNECTION message is recieved
