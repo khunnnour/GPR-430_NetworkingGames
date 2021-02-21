@@ -44,4 +44,11 @@ enum GameMessages
 	ID_USER_LIST_REQUEST
 };
 
+enum GameType
+{
+	INVALID_GAME=-1,
+	BATTLESHIP=0,
+	CHECKERS
+};
+
 #endif	// !_GPRO_NET_H_

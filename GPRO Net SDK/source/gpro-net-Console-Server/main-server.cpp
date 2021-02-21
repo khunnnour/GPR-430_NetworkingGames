@@ -33,6 +33,9 @@
 #include <string>
 #include <vector>
 
+// our libraries
+#include "gpro-net/gpro-net-common/GameRoom.h"
+
 // RakNet Libraries
 #include "RakNet/BitStream.h"
 #include "RakNet/RakNetTypes.h" // MessageID
@@ -43,12 +46,6 @@
 #define MAX_CLIENTS 10
 #define SERVER_PORT 7777
 #define MAX_GAME_ROOM 5
-
-// client struct
-struct client {
-	RakNet::RakString name;
-	RakNet::SystemAddress address;
-};
 
 // protos
 void connectionMade(std::vector<client>& c,RakNet::Packet* p);
