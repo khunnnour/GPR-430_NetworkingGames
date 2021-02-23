@@ -26,7 +26,6 @@
  * PACKET DATA ORDER (^ = required):
  * MESSAGE_ID^
  * TIMESTAMP^
- * USER^
  * OTHER DATA
  * */
 
@@ -44,11 +43,11 @@ enum GameMessages
 	ID_USER_LIST_REQUEST
 };
 
-enum GameType
+typedef enum game_type
 {
 	INVALID_GAME=-1,
 	BATTLESHIP=0,
 	CHECKERS
-};
+}game_type;
 
 #endif	// !_GPRO_NET_H_

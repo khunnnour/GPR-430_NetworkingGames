@@ -10,10 +10,10 @@
 // -- for base class -- //
 GameRoom::GameRoom()
 {
-	gameType = GameType::INVALID_GAME;
+	gameType = game_type::INVALID_GAME;
 	roomID = -1;
 }
-GameRoom::GameRoom(GameType gT, int rID)
+GameRoom::GameRoom(game_type gT, int rID)
 {
 	gameType = gT;
 	roomID = rID;
@@ -21,7 +21,7 @@ GameRoom::GameRoom(GameType gT, int rID)
 
 
 // -- for battleship room -- //
-BattleshipRoom::BattleshipRoom(GameType gT, int rID) :GameRoom(gT, rID)
+BattleshipRoom::BattleshipRoom(int rID) :GameRoom(BATTLESHIP, rID)
 {
 	// initialize the player boards
 	ResetBoard(0);
@@ -43,7 +43,7 @@ void BattleshipRoom::SetShip(int player, int orX, int orY, int dir, int len)
 	if (IsValidPlacement(player, orX,  orY,  dir,  len))
 	{
 		// GET THE DIRECTION COMPONENTS
-	// delta x and y
+		// delta x and y
 		int dX, dY;
 		switch (dir)
 		{
@@ -78,14 +78,11 @@ void BattleshipRoom::SetShip(int player, int orX, int orY, int dir, int len)
 		int currY = orY;
 		for (int i = 0; i < len; i++)
 		{
-			// check if current point is in bounds
-			if ((currX > 9 || currX < 0) || (currY > 9 || currY < 0))
-				return 1;
+			// have already checked if this is valid placement
+			// set location to there is a ship there
+			pBoards[player][currX][currY] = gpro_battleship_ship;
 
-			// check if slot is full
-			if (pBoards[player][currX][currY] != gpro_battleship_open)
-				return 2;
-
+			// shift the current coord in direction
 			currX += dX;
 			currY += dY;
 		}

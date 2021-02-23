@@ -28,23 +28,25 @@ struct client {
 
 class GameRoom {
 public:
-	static GameType gameType;
+	// read only members for the gametype of the room and its id
+	static game_type gameType;
 	static int roomID;
 
+	// contructors
 	GameRoom();
-	GameRoom(GameType,int);
+	GameRoom(game_type,int);
 
 protected:
+	// 2 slot array for the plays
 	client players[2];
+	// vector for all spectators
 	std::vector<client> spectators;
-
-	virtual void Move(int player) {};
 };
 
 class BattleshipRoom : public GameRoom
 {
 public:
-	BattleshipRoom(GameType, int);
+	BattleshipRoom(int);
 
 protected:
 	void Move(int player, int tX, int tY);
