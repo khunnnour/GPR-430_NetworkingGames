@@ -175,6 +175,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\include\gpro-net\gpro-net-common\BattleshipGameMessages.h" />
     <ClInclude Include="..\..\..\include\gpro-net\gpro-net-common\GameMessage.h" />
     <ClInclude Include="..\..\..\include\gpro-net\gpro-net-common\GameRoom.h" />
     <ClInclude Include="..\..\..\include\gpro-net\gpro-net-common\gpro-net-console.h" />

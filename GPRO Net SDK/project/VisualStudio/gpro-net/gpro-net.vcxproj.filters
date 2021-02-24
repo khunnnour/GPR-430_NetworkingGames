@@ -30,6 +30,9 @@
     <ClInclude Include="..\..\..\include\gpro-net\gpro-net-common\GameRoom.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\gpro-net\gpro-net-common\BattleshipGameMessages.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\gpro-net\gpro-net.c">

@@ -2,9 +2,14 @@
 
 class Bitstream;
 
-class GameDataMessage 
+class GameDataMessage
 {
 protected:
+	// member variables
+	
+	int timestamp;
+
+	// operators
 	GameDataMessage operator<<(Bitstream* bs);
 	GameDataMessage operator>>(Bitstream* bs);
 };
