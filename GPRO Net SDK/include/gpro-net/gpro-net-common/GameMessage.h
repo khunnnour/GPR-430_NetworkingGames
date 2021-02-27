@@ -1,15 +1,17 @@
 #pragma once
 
-class Bitstream;
+#include "gpro-net/gpro-net.h"
+
+#include "RakNet/RakNetTypes.h" // MessageID
+
+class BitStream;
 
 class GameDataMessage
 {
+public:
+	GameDataMessage(RakNet::MessageID mID) { messageID = mID; }
+
 protected:
 	// member variables
-	
-	int timestamp;
-
-	// operators
-	GameDataMessage operator<<(Bitstream* bs);
-	GameDataMessage operator>>(Bitstream* bs);
+	RakNet::MessageID messageID;
 };

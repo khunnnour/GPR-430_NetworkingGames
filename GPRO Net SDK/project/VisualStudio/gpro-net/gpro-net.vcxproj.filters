@@ -44,5 +44,8 @@
     <ClCompile Include="..\..\..\source\gpro-net\gpro-net-common\GameRoom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\gpro-net\gpro-net-common\BattleshipGameMessages.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

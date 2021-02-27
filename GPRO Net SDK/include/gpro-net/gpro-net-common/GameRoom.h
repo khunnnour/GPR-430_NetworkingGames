@@ -41,6 +41,9 @@ protected:
 	client players[2];
 	// vector for all spectators
 	std::vector<client> spectators;
+
+	// use for tracking what move
+	int moveNum;
 };
 
 class BattleshipRoom : public GameRoom

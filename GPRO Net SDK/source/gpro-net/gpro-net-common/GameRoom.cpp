@@ -7,16 +7,18 @@
 
 #include "gpro-net/gpro-net-common/GameRoom.h"
 
-// -- for base class -- //
+// --- for base class --- //
 GameRoom::GameRoom()
 {
 	gameType = game_type::INVALID_GAME;
 	roomID = -1;
+	moveNum = 0;
 }
 GameRoom::GameRoom(game_type gT, int rID)
 {
 	gameType = gT;
 	roomID = rID;
+	moveNum = 0;
 }
 
 

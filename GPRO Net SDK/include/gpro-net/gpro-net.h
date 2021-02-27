@@ -32,7 +32,9 @@
 #ifndef _GPRO_NET_H_
 #define _GPRO_NET_H_
 
+//#include "RakNet/RakNetTypes.h" // MessageID
 #include "RakNet/MessageIdentifiers.h"
+//#include "RakNet/GetTime.h"
 
 enum GameMessages
 {
@@ -40,14 +42,15 @@ enum GameMessages
 	ID_LOGIN_MESSAGE,
 	ID_SEND_PUBLIC_MESSAGE,
 	ID_SEND_PRIVATE_MESSAGE,
-	ID_USER_LIST_REQUEST
+	ID_USER_LIST_REQUEST,
+	ID_BS_PLACE_SHIP
 };
 
 typedef enum game_type
 {
-	INVALID_GAME=-1,
-	BATTLESHIP=0,
+	INVALID_GAME = -1,
+	BATTLESHIP = 0,
 	CHECKERS
-}game_type;
+} game_type;
 
 #endif	// !_GPRO_NET_H_
