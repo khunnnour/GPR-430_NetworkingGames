@@ -24,7 +24,24 @@
 struct client {
 	RakNet::RakString name;
 	RakNet::SystemAddress address;
-};
+
+	client() {
+		name = "";
+		address = RakNet::SystemAddress();
+	}
+	client(RakNet::RakString n, RakNet::SystemAddress a)
+	{
+		name = n;
+		address = a;
+	}
+
+	bool operator==(client& rhs) {
+		if (name == rhs.name && address == rhs.address)
+			return true;
+		else
+			return false;
+	}
+}default_client;
 
 class GameRoom {
 public:
@@ -50,6 +67,8 @@ class BattleshipRoom : public GameRoom
 {
 public:
 	BattleshipRoom(int);
+
+	void JoinRoom(client);
 
 protected:
 	void Move(int player, int tX, int tY);

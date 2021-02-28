@@ -54,7 +54,7 @@ int findClient(std::vector<client>& c,RakNet::RakString u);
 
 int main(int const argc, char const* const argv[])
 {
-	// -- Start-Up -- //
+	// ---- Start-Up ---- //
 	printf("Starting the server.\n");
 
 	// vector for connected clients
@@ -79,8 +79,19 @@ int main(int const argc, char const* const argv[])
 	else
 		messLogFile << "START => \n";
 
+	// create the game rooms --
+	BattleshipRoom batRooms[MAX_GAME_ROOM] = {
+		BattleshipRoom(0),
+		BattleshipRoom(1),
+		BattleshipRoom(2),
+		BattleshipRoom(3),
+		BattleshipRoom(4)
+	};
+
+	// ---- Main Loop ---- //
 	while (1)
 	{
+		// Packet interrupt ---
 		// if 'T' is pressed wait for input
 		if ((int)GetAsyncKeyState(VK_RCONTROL) != 0)
 		{
@@ -95,6 +106,7 @@ int main(int const argc, char const* const argv[])
 		}
 
 
+		// handle packets ---
 		for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 		{
 			switch (packet->data[0])
@@ -108,20 +120,11 @@ int main(int const argc, char const* const argv[])
 			case ID_REMOTE_NEW_INCOMING_CONNECTION:
 			{
 				printf("Another client has connected.\n");
-
 			}
 			break;
 			case ID_CONNECTION_REQUEST_ACCEPTED:
 			{
 				printf("Our connection request has been accepted.\n");
-				// use a bitstream to write a custom user message
-				/*RakNet::BitStream bsOut;
-				bsOut.Write((RakNet::MessageID)ID_GAME_MESSAGE_1);
-				char str[32];
-				//std::cin >> str;
-				RakNet::RakString rakStr(str);
-				bsOut.Write(rakStr);
-				peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);*/
 			}
 			break;
 			case ID_NEW_INCOMING_CONNECTION:
@@ -282,7 +285,7 @@ int main(int const argc, char const* const argv[])
 
 	messLogFile << "\n";
 	messLogFile.close();
-	peer->Shutdown(5);
+	peer->Shutdown(50);
 	RakNet::RakPeerInterface::DestroyInstance(peer);
 
 	printf("\n\nQuitting...\n\n");
@@ -314,9 +317,7 @@ void connectionMade(std::vector<client>& c, RakNet::Packet* p)
 	printf("%d | %s has connected.\n", (int)inTime, user.C_String());
 
 	// create a new client
-	client newClient;
-	newClient.name = user;
-	newClient.address = p->systemAddress;
+	client newClient = client(user, p->systemAddress);
 
 	// add to client vector
 	c.push_back(newClient);

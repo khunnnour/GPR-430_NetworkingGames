@@ -30,9 +30,27 @@ BattleshipRoom::BattleshipRoom(int rID) :GameRoom(BATTLESHIP, rID)
 	ResetBoard(1);
 }
 
+void BattleshipRoom::JoinRoom(client c)
+{
+	// check if 
+	if (players[0] == default_client)
+		players[0] = c;
+	else if (players[1] == default_client)
+		players[1] = c;
+	else
+		spectators.push_back(c);
+}
+
 void BattleshipRoom::Move(int player, int tX, int tY)
 {
+	// get index of opposing player
+	int index = (player - 1) % 2;
 
+	// check if there is a ship there
+	bool shipThere = gpro_flag_check(pBoards[index][tX][tY], gpro_battleship_ship);
+
+	// flag coord as tried
+	//gpro_flag_raise( pBoards[index][tX][tY],gpro_batt
 }
 
 void BattleshipRoom::ResetBoard(int player)
