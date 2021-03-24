@@ -31,19 +31,23 @@
 #if (defined _WINDOWS || defined _WIN32)
 
 //#include <Windows.h>
-#pragma comment(lib, "gpro-net-Client-Plugin.lib")
+//#pragma comment(lib, "gpro-net-Client-Plugin.lib")
 
 // complete plugin test
 int testPlugin()
 {
-	//HMODULE plugin = LoadLibrary(TEXT("./plugin/gpro-net-Client-Plugin"));
-	//if (plugin)
+	HMODULE plugin = LoadLibrary(TEXT("./animal3D-demos/gpro-net-Client-Plugin"));
+	if (plugin)
 	{
-		printf("%d \n", foo(9000));
+		// get address of function
+		int(*foo)(int) = (int(*)(int))GetProcAddress(plugin, "foo");
+
+		// call function
+		if (foo)
+			printf("%d \n", foo(9000));
 
 		// done
-		//return FreeLibrary(plugin);
-		return 1;
+		return FreeLibrary(plugin);
 	}
 	return -1;
 }

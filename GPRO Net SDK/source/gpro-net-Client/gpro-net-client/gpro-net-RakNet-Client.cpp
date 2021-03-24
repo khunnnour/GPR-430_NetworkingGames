@@ -28,6 +28,7 @@
 namespace gproNet
 {
 	cRakNetClient::cRakNetClient()
+		: index(-1)
 	{
 		RakNet::SocketDescriptor sd;
 		char SERVER_IP[16] = "127.0.0.1";
@@ -39,7 +40,8 @@ namespace gproNet
 
 	cRakNetClient::~cRakNetClient()
 	{
-		peer->Shutdown(0);
+		peer->CloseConnection(server, true, 0, IMMEDIATE_PRIORITY);
+		peer->Shutdown(0, 0, IMMEDIATE_PRIORITY);
 	}
 
 	bool cRakNetClient::ProcessMessage(RakNet::BitStream& bitstream, RakNet::SystemAddress const sender, RakNet::Time const dtSendToReceive, RakNet::MessageID const msgID)
@@ -71,14 +73,25 @@ namespace gproNet
 
 		case ID_CONNECTION_REQUEST_ACCEPTED:
 		{
+			// set server info
+			server = sender;
+
 			// client connects to server, send greeting
 			RakNet::BitStream bitstream_w;
 			WriteTest(bitstream_w, "Hello server from client");
 			peer->Send(&bitstream_w, MEDIUM_PRIORITY, UNRELIABLE_SEQUENCED, 0, sender, false);
 		}	return true;
 
-			// test message
+			// index receipt
 		case ID_GPRO_MESSAGE_COMMON_BEGIN:
+		{
+			// read our index relative to server
+			if (sender == server && index < 0)
+				bitstream.Read(index);
+		}	return true;
+
+			// test message
+		case ID_GPRO_MESSAGE_COMMON_END:
 		{
 			// client receives greeting, just print it
 			ReadTest(bitstream);

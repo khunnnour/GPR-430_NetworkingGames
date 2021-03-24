@@ -16,6 +16,51 @@
     <Filter Include="Header Files\Unity">
       <UniqueIdentifier>{397e0af6-fb0d-4b8a-aaa6-149ffcb72b35}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\gpro-net-game">
+      <UniqueIdentifier>{fab31ebe-7999-4167-9c87-9a618605f2f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\gpro-net-game">
+      <UniqueIdentifier>{f6006d65-277a-4ad5-95dc-bbefce349a47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gpro-net-game\sRenderer">
+      <UniqueIdentifier>{7ad66471-81b7-4964-9a70-5fbaffdac364}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\gpro-net-game\sRenderer">
+      <UniqueIdentifier>{861ea744-03cf-40b6-b35b-30cfcbe566e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\gpro-net-game\sRenderer\_utility">
+      <UniqueIdentifier>{7d8e9598-79fc-4d97-aad0-c083132003be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gpro-net-game\sRenderer\_utility">
+      <UniqueIdentifier>{2c03d54e-13d9-4287-b6ad-36459c907b1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\gpro-net-game\sRenderer\_utility\_inl">
+      <UniqueIdentifier>{70897c29-095c-4676-ad7f-0a7c6473f359}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\glsl">
+      <UniqueIdentifier>{e4861f55-fa46-4e3c-b4ee-6cd3b93c2c48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\glsl\4x">
+      <UniqueIdentifier>{b37ca25d-0b6a-4b7c-bd32-3c9974bd9f28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\glsl\4x\vs">
+      <UniqueIdentifier>{6e34dace-4fa5-4a46-8e5f-92e8b8b79a28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\glsl\4x\fs">
+      <UniqueIdentifier>{2760c3e2-19fe-4327-a296-75aad7c8ce85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\glsl\4x\fs\00-common">
+      <UniqueIdentifier>{77adf86a-4537-4ce8-a7af-f434436700df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\glsl\4x\vs\00-common">
+      <UniqueIdentifier>{a6505dbd-23e9-4cf4-b122-af728062e9c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\gpro-net-game\sPluginState">
+      <UniqueIdentifier>{e597b79a-9138-4a83-b3d6-c2362ca63d02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gpro-net-game\sPluginState">
+      <UniqueIdentifier>{a7c622ba-3b43-48f8-b9c8-79f561a40249}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-Client-Plugin.cpp">
@@ -24,15 +69,111 @@
     <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\main-client-dll.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\gpro-net-callbacks.cpp">
+      <Filter>Source Files\gpro-net-game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\sRenderer-idle-input.c">
+      <Filter>Source Files\gpro-net-game\sRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\sRenderer-idle-render.c">
+      <Filter>Source Files\gpro-net-game\sRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\sRenderer-idle-update.c">
+      <Filter>Source Files\gpro-net-game\sRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\sRenderer-load.c">
+      <Filter>Source Files\gpro-net-game\sRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\sRenderer-unload.c">
+      <Filter>Source Files\gpro-net-game\sRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\_utility\_src\sRenderer-object.c">
+      <Filter>Source Files\gpro-net-game\sRenderer\_utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\_utility\_src\sRenderer-util.c">
+      <Filter>Source Files\gpro-net-game\sRenderer\_utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sPluginState\sPluginState.cpp">
+      <Filter>Source Files\gpro-net-game\sPluginState</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-Client-Plugin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\sRenderer.h">
+      <Filter>Header Files\gpro-net-game\sRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\_utility\sRenderer-macros.h">
+      <Filter>Header Files\gpro-net-game\sRenderer\_utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\_utility\sRenderer-object.h">
+      <Filter>Header Files\gpro-net-game\sRenderer\_utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\_utility\sRenderer-program.h">
+      <Filter>Header Files\gpro-net-game\sRenderer\_utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\_utility\sRenderer-util.h">
+      <Filter>Header Files\gpro-net-game\sRenderer\_utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sPluginState\sPluginState.h">
+      <Filter>Header Files\gpro-net-game\sPluginState</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Unity\gpro-net-Unity\Assets\Scripts\Plugins\gproClientPlugin.cs">
       <Filter>Header Files\Unity</Filter>
+    </None>
+    <None Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\_utility\_inl\sRenderer-util.inl">
+      <Filter>Header Files\gpro-net-game\sRenderer\_utility\_inl</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\drawColorAttrib_fs4x.glsl">
+      <Filter>Resource Files\glsl\4x\fs</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\drawColorUnif_fs4x.glsl">
+      <Filter>Resource Files\glsl\4x\fs</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\00-common\drawLambert_fs4x.glsl">
+      <Filter>Resource Files\glsl\4x\fs\00-common</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\00-common\drawPhong_fs4x.glsl">
+      <Filter>Resource Files\glsl\4x\fs\00-common</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\00-common\drawTexture_fs4x.glsl">
+      <Filter>Resource Files\glsl\4x\fs\00-common</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\00-common\utilCommon_fs4x.glsl">
+      <Filter>Resource Files\glsl\4x\fs\00-common</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\passColor_transform_instanced_vs4x.glsl">
+      <Filter>Resource Files\glsl\4x\vs</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\passColor_transform_vs4x.glsl">
+      <Filter>Resource Files\glsl\4x\vs</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\passthru_transform_instanced_vs4x.glsl">
+      <Filter>Resource Files\glsl\4x\vs</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\passthru_transform_vs4x.glsl">
+      <Filter>Resource Files\glsl\4x\vs</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\passthru_vs4x.glsl">
+      <Filter>Resource Files\glsl\4x\vs</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\00-common\passTangentBasis_transform_instanced_vs4x.glsl">
+      <Filter>Resource Files\glsl\4x\vs\00-common</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\00-common\passTangentBasis_transform_vs4x.glsl">
+      <Filter>Resource Files\glsl\4x\vs\00-common</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\00-common\passTexcoord_transform_instanced_vs4x.glsl">
+      <Filter>Resource Files\glsl\4x\vs\00-common</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\00-common\passTexcoord_transform_vs4x.glsl">
+      <Filter>Resource Files\glsl\4x\vs\00-common</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\00-common\utilCommon_vs4x.glsl">
+      <Filter>Resource Files\glsl\4x\vs\00-common</Filter>
     </None>
   </ItemGroup>
 </Project>

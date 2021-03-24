@@ -96,14 +96,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN$(PlatformArchitecture);_WINDOWS;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;GPRO_NET_IMPORTS;%(PreprocessorDefinitions);_DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(gpro_net_sdk)include\;$(dev_sdk_dir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(gpro_net_sdk)include\;$(gpro_net_sdk)thirdparty\include\;$(dev_sdk_dir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(gpro_net_sdk)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gpro-net.lib;gpro-net-Client.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(gpro_net_sdk)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(gpro_net_sdk)thirdparty\lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(dev_sdk_dir)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(dev_sdk_dir)lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gpro-net.lib;gpro-net-Client.lib;glew32.lib;opengl32.lib;animal3D-A3DG-OpenGL.lib;animal3D-DemoPlayerApp-Platform.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -114,7 +114,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN$(PlatformArchitecture);_WINDOWS;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;GPRO_NET_IMPORTS;%(PreprocessorDefinitions);NDEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(gpro_net_sdk)include\;$(dev_sdk_dir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(gpro_net_sdk)include\;$(gpro_net_sdk)thirdparty\include\;$(dev_sdk_dir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -122,9 +122,15 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(gpro_net_sdk)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gpro-net.lib;gpro-net-Client.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(gpro_net_sdk)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(gpro_net_sdk)thirdparty\lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(dev_sdk_dir)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(dev_sdk_dir)lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gpro-net.lib;gpro-net-Client.lib;glew32.lib;opengl32.lib;animal3D-A3DG-OpenGL.lib;animal3D-DemoPlayerApp-Platform.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>
+@echo off
+xcopy /y "$(DEV_SDK_DIR)bin\$(PlatformTarget)\*.dll" "$(OutDir)"
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -132,14 +138,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN$(PlatformArchitecture);_WINDOWS;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;GPRO_NET_IMPORTS;%(PreprocessorDefinitions);_DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(gpro_net_sdk)include\;$(dev_sdk_dir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(gpro_net_sdk)include\;$(gpro_net_sdk)thirdparty\include\;$(dev_sdk_dir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(gpro_net_sdk)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gpro-net.lib;gpro-net-Client.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(gpro_net_sdk)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(gpro_net_sdk)thirdparty\lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(dev_sdk_dir)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(dev_sdk_dir)lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gpro-net.lib;gpro-net-Client.lib;glew32.lib;opengl32.lib;animal3D-A3DG-OpenGL.lib;animal3D-DemoPlayerApp-Platform.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -150,7 +156,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN$(PlatformArchitecture);_WINDOWS;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;GPRO_NET_IMPORTS;%(PreprocessorDefinitions);NDEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(gpro_net_sdk)include\;$(dev_sdk_dir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(gpro_net_sdk)include\;$(gpro_net_sdk)thirdparty\include\;$(dev_sdk_dir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -158,12 +164,24 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(gpro_net_sdk)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gpro-net.lib;gpro-net-Client.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(gpro_net_sdk)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(gpro_net_sdk)thirdparty\lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(dev_sdk_dir)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(dev_sdk_dir)lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gpro-net.lib;gpro-net-Client.lib;glew32.lib;opengl32.lib;animal3D-A3DG-OpenGL.lib;animal3D-DemoPlayerApp-Platform.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>
+@echo off
+xcopy /y "$(DEV_SDK_DIR)bin\$(PlatformTarget)\*.dll" "$(OutDir)"
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\gpro-net-Client-Windowed\main-client-win.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Windowed\a3_app_utils\a3_app_load.h" />
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Windowed\a3_app_utils\Win32\a3_app_application.h" />
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Windowed\a3_app_utils\Win32\a3_app_renderer.h" />
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Windowed\a3_app_utils\Win32\a3_app_window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

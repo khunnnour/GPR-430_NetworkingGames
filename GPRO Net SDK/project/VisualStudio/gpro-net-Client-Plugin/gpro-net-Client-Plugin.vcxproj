@@ -100,22 +100,24 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN$(PlatformArchitecture);_WINDOWS;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;GPRO_NET_EXPORTS;_USRDLL;%(PreprocessorDefinitions);_DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(gpro_net_sdk)include\;$(dev_sdk_dir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(gpro_net_sdk)include\;$(gpro_net_sdk)thirdparty\include\;$(dev_sdk_dir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(gpro_net_sdk)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gpro-net.lib;gpro-net-Client.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(gpro_net_sdk)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(gpro_net_sdk)thirdparty\lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(dev_sdk_dir)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(dev_sdk_dir)lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gpro-net.lib;gpro-net-Client.lib;glew32.lib;opengl32.lib;DevIL.lib;ilu.lib;ilut.lib;Xinput.lib;animal3D.lib;animal3D-A3DM.lib;animal3D-a3DG-OpenGL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
 @echo off
-set "dst=$(gpro_net_sdk)bin\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\"
+set "bin=$(gpro_net_sdk)bin\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\"
+set "dst=%bin%animal3D-demos"
 mkdir "%dst%"
 xcopy /y "$(TargetPath)" "%dst%"
+xcopy /y "$(gpro_net_sdk)resource\animal3D-demoinfo.txt" "%dst%"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -127,7 +129,7 @@ xcopy /y "$(TargetPath)" "%dst%"
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN$(PlatformArchitecture);_WINDOWS;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;GPRO_NET_EXPORTS;_USRDLL;%(PreprocessorDefinitions);NDEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(gpro_net_sdk)include\;$(dev_sdk_dir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(gpro_net_sdk)include\;$(gpro_net_sdk)thirdparty\include\;$(dev_sdk_dir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -136,15 +138,17 @@ xcopy /y "$(TargetPath)" "%dst%"
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(gpro_net_sdk)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gpro-net.lib;gpro-net-Client.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(gpro_net_sdk)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(gpro_net_sdk)thirdparty\lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(dev_sdk_dir)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(dev_sdk_dir)lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gpro-net.lib;gpro-net-Client.lib;glew32.lib;opengl32.lib;DevIL.lib;ilu.lib;ilut.lib;Xinput.lib;animal3D.lib;animal3D-A3DM.lib;animal3D-a3DG-OpenGL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
 @echo off
-set "dst=$(gpro_net_sdk)bin\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\"
+set "bin=$(gpro_net_sdk)bin\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\"
+set "dst=%bin%animal3D-demos"
 mkdir "%dst%"
 xcopy /y "$(TargetPath)" "%dst%"
+xcopy /y "$(gpro_net_sdk)resource\animal3D-demoinfo.txt" "%dst%"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -154,22 +158,24 @@ xcopy /y "$(TargetPath)" "%dst%"
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN$(PlatformArchitecture);_WINDOWS;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;GPRO_NET_EXPORTS;_USRDLL;%(PreprocessorDefinitions);_DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(gpro_net_sdk)include\;$(dev_sdk_dir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(gpro_net_sdk)include\;$(gpro_net_sdk)thirdparty\include\;$(dev_sdk_dir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(gpro_net_sdk)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gpro-net.lib;gpro-net-Client.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(gpro_net_sdk)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(gpro_net_sdk)thirdparty\lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(dev_sdk_dir)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(dev_sdk_dir)lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gpro-net.lib;gpro-net-Client.lib;glew32.lib;opengl32.lib;DevIL.lib;ilu.lib;ilut.lib;Xinput.lib;animal3D.lib;animal3D-A3DM.lib;animal3D-a3DG-OpenGL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
 @echo off
-set "dst=$(gpro_net_sdk)bin\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\"
+set "bin=$(gpro_net_sdk)bin\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\"
+set "dst=%bin%animal3D-demos"
 mkdir "%dst%"
 xcopy /y "$(TargetPath)" "%dst%"
+xcopy /y "$(gpro_net_sdk)resource\animal3D-demoinfo.txt" "%dst%"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -181,7 +187,7 @@ xcopy /y "$(TargetPath)" "%dst%"
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN$(PlatformArchitecture);_WINDOWS;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;GPRO_NET_EXPORTS;_USRDLL;%(PreprocessorDefinitions);NDEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(gpro_net_sdk)include\;$(dev_sdk_dir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(gpro_net_sdk)include\;$(gpro_net_sdk)thirdparty\include\;$(dev_sdk_dir)include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -190,26 +196,60 @@ xcopy /y "$(TargetPath)" "%dst%"
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(gpro_net_sdk)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gpro-net.lib;gpro-net-Client.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(gpro_net_sdk)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(gpro_net_sdk)thirdparty\lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(dev_sdk_dir)lib\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\;$(dev_sdk_dir)lib\$(PlatformTarget)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gpro-net.lib;gpro-net-Client.lib;glew32.lib;opengl32.lib;DevIL.lib;ilu.lib;ilut.lib;Xinput.lib;animal3D.lib;animal3D-A3DM.lib;animal3D-a3DG-OpenGL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
 @echo off
-set "dst=$(gpro_net_sdk)bin\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\"
+set "bin=$(gpro_net_sdk)bin\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)\"
+set "dst=%bin%animal3D-demos"
 mkdir "%dst%"
 xcopy /y "$(TargetPath)" "%dst%"
+xcopy /y "$(gpro_net_sdk)resource\animal3D-demoinfo.txt" "%dst%"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-Client-Plugin.cpp" />
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\gpro-net-callbacks.cpp" />
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sPluginState\sPluginState.cpp" />
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\sRenderer-idle-input.c" />
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\sRenderer-idle-render.c" />
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\sRenderer-idle-update.c" />
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\sRenderer-load.c" />
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\sRenderer-unload.c" />
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\_utility\_src\sRenderer-object.c" />
+    <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\_utility\_src\sRenderer-util.c" />
     <ClCompile Include="..\..\..\source\gpro-net-Client-Plugin\main-client-dll.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-Client-Plugin.h" />
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sPluginState\sPluginState.h" />
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\sRenderer.h" />
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\_utility\sRenderer-macros.h" />
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\_utility\sRenderer-object.h" />
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\_utility\sRenderer-program.h" />
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\_utility\sRenderer-util.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\resource\glsl\4x\fs\00-common\drawLambert_fs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\fs\00-common\drawPhong_fs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\fs\00-common\drawTexture_fs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\fs\00-common\utilCommon_fs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\fs\drawColorAttrib_fs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\fs\drawColorUnif_fs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\vs\00-common\passTangentBasis_transform_instanced_vs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\vs\00-common\passTangentBasis_transform_vs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\vs\00-common\passTexcoord_transform_instanced_vs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\vs\00-common\passTexcoord_transform_vs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\vs\00-common\utilCommon_vs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\vs\passColor_transform_instanced_vs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\vs\passColor_transform_vs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\vs\passthru_transform_instanced_vs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\vs\passthru_transform_vs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\vs\passthru_vs4x.glsl" />
+    <None Include="..\..\..\source\gpro-net-Client-Plugin\gpro-net-game\sRenderer\_utility\_inl\sRenderer-util.inl" />
     <None Include="..\..\Unity\gpro-net-Unity\Assets\Scripts\Plugins\gproClientPlugin.cs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

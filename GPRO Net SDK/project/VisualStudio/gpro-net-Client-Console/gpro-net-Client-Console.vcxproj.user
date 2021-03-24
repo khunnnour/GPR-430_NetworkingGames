@@ -3,17 +3,21 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerWorkingDirectory>$(OutDir)</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerEnvironment>PATH=%PATH%;$(DEV_SDK_DIR)bin\$(PlatformTarget);$(DEV_SDK_DIR)bin\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)</LocalDebuggerEnvironment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerWorkingDirectory>$(OutDir)</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerEnvironment>PATH=%PATH%;$(DEV_SDK_DIR)bin\$(PlatformTarget);$(DEV_SDK_DIR)bin\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)</LocalDebuggerEnvironment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LocalDebuggerWorkingDirectory>$(OutDir)</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerEnvironment>PATH=%PATH%;$(DEV_SDK_DIR)bin\$(PlatformTarget);$(DEV_SDK_DIR)bin\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)</LocalDebuggerEnvironment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LocalDebuggerWorkingDirectory>$(OutDir)</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerEnvironment>PATH=%PATH%;$(DEV_SDK_DIR)bin\$(PlatformTarget);$(DEV_SDK_DIR)bin\$(PlatformTarget)\$(PlatformToolset)\$(Configuration)</LocalDebuggerEnvironment>
   </PropertyGroup>
 </Project>

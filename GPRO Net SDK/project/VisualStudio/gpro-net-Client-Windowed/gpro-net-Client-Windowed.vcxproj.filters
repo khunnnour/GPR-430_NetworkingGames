@@ -13,10 +13,30 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\a3_app_utils">
+      <UniqueIdentifier>{b09f25ba-189e-42db-86af-1ef31a0631c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\a3_app_utils\Win32">
+      <UniqueIdentifier>{a9f48105-03db-4f50-9257-342259a170c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\gpro-net-Client-Windowed\main-client-win.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Windowed\a3_app_utils\a3_app_load.h">
+      <Filter>Header Files\a3_app_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Windowed\a3_app_utils\Win32\a3_app_application.h">
+      <Filter>Header Files\a3_app_utils\Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Windowed\a3_app_utils\Win32\a3_app_renderer.h">
+      <Filter>Header Files\a3_app_utils\Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gpro-net-Client-Windowed\a3_app_utils\Win32\a3_app_window.h">
+      <Filter>Header Files\a3_app_utils\Win32</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

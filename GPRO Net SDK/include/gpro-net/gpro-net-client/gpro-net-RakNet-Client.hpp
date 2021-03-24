@@ -48,6 +48,16 @@ namespace gproNet
 	//	RakNet peer management for server.
 	class cRakNetClient : public cRakNetManager
 	{
+		// protected data
+	protected:
+		// server
+		//	System address of server to whom we are connected.
+		RakNet::SystemAddress server;
+
+		// index
+		//	Index in system list of server to whom we are connected.
+		int index;
+
 		// public methods
 	public:
 		// cRakNetClient

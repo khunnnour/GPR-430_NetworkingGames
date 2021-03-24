@@ -69,7 +69,7 @@ namespace gproNet
 	RakNet::BitStream& cRakNetManager::WriteTest(RakNet::BitStream& bitstream, char const message[])
 	{
 		WriteTimestamp(bitstream);
-		bitstream.Write((RakNet::MessageID)ID_GPRO_MESSAGE_COMMON_BEGIN);
+		bitstream.Write((RakNet::MessageID)ID_GPRO_MESSAGE_COMMON_END);
 		bitstream.Write(message);
 		return bitstream;
 	}

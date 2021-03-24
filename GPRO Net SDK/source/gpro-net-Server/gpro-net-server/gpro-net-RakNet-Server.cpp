@@ -50,8 +50,13 @@ namespace gproNet
 		switch (msgID)
 		{
 		case ID_NEW_INCOMING_CONNECTION:
-			//printf("A connection is incoming.\n");
-			return true;
+		{
+			// send new connection their index on our system
+			RakNet::BitStream bitstream_w;
+			bitstream_w.Write((RakNet::MessageID)ID_GPRO_MESSAGE_COMMON_BEGIN);
+			bitstream_w.Write(peer->GetIndexFromSystemAddress(sender));
+			peer->Send(&bitstream_w, IMMEDIATE_PRIORITY, RELIABLE_ORDERED, 0, sender, false);
+		}	return true;
 		case ID_NO_FREE_INCOMING_CONNECTIONS:
 			//printf("The server is full.\n");
 			return true;
@@ -63,7 +68,7 @@ namespace gproNet
 			return true;
 
 			// test message
-		case ID_GPRO_MESSAGE_COMMON_BEGIN:
+		case ID_GPRO_MESSAGE_COMMON_END:
 		{
 			// server receives greeting, print it and send one back
 			RakNet::BitStream bitstream_w;
