@@ -97,6 +97,15 @@ namespace gproNet
 			ReadTest(bitstream);
 		}	return true;
 
+		// test message
+		case ID_GPRO_MESSAGE_UPDATE_POSITION:
+		{
+			// new server position update message
+			sSimulationAgent agent;
+			sSimulationAgent::Read(bitstream, agent);
+
+		}	return true;
+
 		}
 		return false;
 	}
