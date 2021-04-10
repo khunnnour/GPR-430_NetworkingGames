@@ -104,6 +104,17 @@ namespace gproNet
 			sSimulationAgent agent;
 			sSimulationAgent::Read(bitstream, agent);
 
+			//preform dead reckoning
+			//alogrithm
+			// calculate threshhold
+			// - within thresh  
+			//    -> kinematic equations to calculate latest position/velocity
+			//       lerp between ours and theirs
+			// - outisde thresh 
+			//    -> snap to theirs
+
+			// update our (client) agent
+			agents[agent.ownerID][agent.agentID] = agent;
 		}	return true;
 
 		}

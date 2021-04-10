@@ -62,6 +62,13 @@ namespace gproNet
 		ID_GPRO_MESSAGE_COMMON_END
 	};
 
+	struct sSimulationInput
+	{
+		short ownerID, agentID;
+		//bool leftPressed, rightPressed, upPressed, downPressed;
+		char pressed[8];
+	};
+
 	struct sSimulationAgent
 	{
 		short ownerID, agentID;
