@@ -1,0 +1,1 @@
+"C:\Program Files\Epic Games\UE_4.26\Engine\Binaries\Win64\UE4Editor.exe" "%~dp0NetworkTest\NetworkTest.uproject" -game -ResX=800 -ResY=900 -WinX=0 -WinY=20 -log
