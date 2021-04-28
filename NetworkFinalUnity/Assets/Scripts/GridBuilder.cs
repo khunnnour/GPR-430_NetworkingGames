@@ -28,7 +28,7 @@ public class GridBuilder : MonoBehaviour
                 gridSquare.transform.SetParent(transform);
             }
         }
-        SpawnPlayer();
+        //SpawnPlayer();
     }
 
     private void SpawnPlayer() 
