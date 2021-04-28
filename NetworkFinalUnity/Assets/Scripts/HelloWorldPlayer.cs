@@ -26,25 +26,29 @@ namespace HelloWorld
         private NetworkConfig _config;
         private CustomMessagingManager.UnnamedMessageDelegate _messageDelegate;
 
-        private void Start()
-        {
-            _messageLog = GameObject.FindWithTag("MessageLog").GetComponent<Text>();
-        }
-
         public override void NetworkStart()
         {
-            Move();
+            Debug.Log("network start");
             _config = NetworkManager.Singleton.NetworkConfig;
-            _messageDelegate = MessageDelegate;
+            CustomMessagingManager.OnUnnamedMessage += MessageDelegate;
+        }
+
+        private void Start()
+        {
+            Debug.Log("start");
+            _messageLog = GameObject.FindWithTag("MessageLog").GetComponent<Text>();
+            Move();
         }
 
         private void MessageDelegate(ulong clientid, Stream stream)
         {
-            byte[] message = new byte[] { };
-            
-            stream.Read(message, 0, 8);
+            Debug.Log("Unnamed Message received");
+
+            NetworkReader reader = new NetworkReader(stream);
+
+            string message = reader.ReadString().ToString();
+
             _messageLog.text = "Received message: " + message;
-            Debug.Log("Message recieved");
         }
 
         public void Move()
@@ -59,10 +63,13 @@ namespace HelloWorld
             {
                 //SubmitPositionRequestServerRpc();
                 //SendTextMessageServerRpc("hello server");
-                byte[] message = Encoding.ASCII.GetBytes("hello server");
-                NetworkBuffer buffer = new NetworkBuffer(message);
-                CustomMessagingManager.SendUnnamedMessage(_config.NetworkTransport.ServerClientId, buffer,
+                NetworkBuffer buffer = new NetworkBuffer();
+                NetworkWriter writer = new NetworkWriter(buffer);
+                writer.WriteString("Hello Server");
+                
+                CustomMessagingManager.SendUnnamedMessage(OwnerClientId, buffer,
                     NetworkChannel.DefaultMessage);
+                Debug.Log("Message sent");
             }
         }
 
@@ -73,11 +80,11 @@ namespace HelloWorld
         }
 
         [ServerRpc]
-        void SendTextMessageServerRpc(string message,ServerRpcParams rpcParams = default)
+        void SendTextMessageServerRpc(string message, ServerRpcParams rpcParams = default)
         {
             _messageLog.text = "Received message: " + message;
         }
-        
+
         static Vector3 GetRandomPositionOnPlane()
         {
             return new Vector3(Random.Range(-4f, 4f), 1f, Random.Range(-4f, 4f));
