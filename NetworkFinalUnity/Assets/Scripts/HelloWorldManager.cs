@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace HelloWorld
 {
+    // Code originally from the MLAPI docs
     public class HelloWorldManager : MonoBehaviour
     {
         void OnGUI()
@@ -31,8 +32,7 @@ namespace HelloWorld
 
         static void StatusLabels()
         {
-            var mode = NetworkManager.Singleton.IsHost ?
-                "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
+            var mode = NetworkManager.Singleton.IsServer ? "Server" : "Client";
 
             GUILayout.Label("Transport: " +
                             NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
