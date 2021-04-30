@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using MLAPI;
 using MLAPI.Configuration;
 using MLAPI.Messaging;
@@ -9,7 +7,6 @@ using MLAPI.Serialization;
 using MLAPI.Transports;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 namespace HelloWorld
