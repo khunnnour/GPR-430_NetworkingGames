@@ -25,14 +25,14 @@ namespace HelloWorld
 
         public override void NetworkStart()
         {
-            Debug.Log("network start");
+            //Debug.Log("network start");
             _config = NetworkManager.Singleton.NetworkConfig;
             //CustomMessagingManager.OnUnnamedMessage += MessageDelegate;
         }
 
         private void Start()
         {
-            Debug.Log("start");
+            //Debug.Log("start");
             _messageLog = GameObject.FindWithTag("MessageLog").GetComponent<Text>();
             Move();
         }
@@ -50,24 +50,27 @@ namespace HelloWorld
 
         public void Move()
         {
-            if (NetworkManager.Singleton.IsServer)
-            {
-                var randomPosition = GetRandomPositionOnPlane();
-                transform.position = randomPosition;
-                Position.Value = randomPosition;
-            }
-            else
-            {
-                //SubmitPositionRequestServerRpc();
-                //SendTextMessageServerRpc("hello server");
-                NetworkBuffer buffer = new NetworkBuffer();
-                NetworkWriter writer = new NetworkWriter(buffer);
-                writer.WriteString("Hello Server");
-                
-                CustomMessagingManager.SendUnnamedMessage(OwnerClientId, buffer,
-                    NetworkChannel.DefaultMessage);
-                Debug.Log("Message sent");
-            }
+			if (NetworkManager.Singleton.IsServer)
+			{
+				var randomPosition = GetRandomPositionOnPlane();
+				transform.position = randomPosition;
+				Position.Value = randomPosition;
+			}
+			else
+			{
+				//SubmitPositionRequestServerRpc();
+				//SendTextMessageServerRpc("hello server");
+				//NetworkBuffer buffer = new NetworkBuffer();
+				//NetworkWriter writer = new NetworkWriter(buffer);
+				//writer.WriteString("Hello Server");
+
+				//CustomMessagingManager.SendUnnamedMessage(OwnerClientId, buffer,
+				//    NetworkChannel.DefaultMessage);
+				//Debug.Log("Message sent");
+				//NetworkInterface.Instance.SendMapEvent(OwnerClientId, 2, 56);
+				//NetworkInterface.Instance.SendMapEvent(OwnerClientId, 2, 56);
+				NetworkInterface.Instance.SendPlayerSpatial(OwnerClientId, 2, transform);
+			}
         }
 
         [ServerRpc]

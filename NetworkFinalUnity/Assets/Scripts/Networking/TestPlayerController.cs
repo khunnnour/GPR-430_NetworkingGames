@@ -25,7 +25,8 @@ public class TestPlayerController : NetworkBehaviour
     private void Start()
     {
         _rb = GetComponent<Rigidbody>();
-        _lastInput ^= _lastInput;
+        _lastInput ^= _lastInput; // clear last input
+		//NetworkInterface.Instance.SendMapEvent(OwnerClientId, (int)OwnerClientId, 3);
     }
 
     private void Update()
@@ -48,7 +49,7 @@ public class TestPlayerController : NetworkBehaviour
         if (Input.GetKey(KeyCode.S)) _lastInput |= PlayerInput.S;
         if (Input.GetKey(KeyCode.D)) _lastInput |= PlayerInput.D;
         // send player input info to server
-        NetworkInterface.Instance.SendPlayerInput(OwnerClientId,(int)OwnerClientId, _lastInput);
+        //NetworkInterface.Instance.SendPlayerInput(OwnerClientId,(int)OwnerClientId, _lastInput);
     }
     
     // local simulation
