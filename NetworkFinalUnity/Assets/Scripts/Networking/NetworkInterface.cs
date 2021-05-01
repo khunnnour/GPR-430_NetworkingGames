@@ -30,6 +30,7 @@ public class NetworkInterface : MonoBehaviour
 	public static NetworkInterface Instance;
 
 	private NetworkConfig _config;
+	private GameManager _manager;
 	private Text _messageLog;
 
 	private void Awake()
@@ -40,6 +41,8 @@ public class NetworkInterface : MonoBehaviour
 	public void Start()
 	{
 		_config = NetworkManager.Singleton.NetworkConfig;
+		_manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+
 		_messageLog = GameObject.FindWithTag("MessageLog").GetComponent<Text>();
 		CustomMessagingManager.OnUnnamedMessage += ProcessUnnamedMessage;
 	}
@@ -52,7 +55,7 @@ public class NetworkInterface : MonoBehaviour
 
 	private void ProcessUnnamedMessage(ulong clientid, Stream stream)
 	{
-		Debug.Log("Unnamed Message received (" + stream.Length + " bytes)");
+		Debug.Log("Unnamed Message received (" + stream.Length + " bytes) from " + clientid);
 
 		NetworkReader reader = new NetworkReader(stream);
 		// get message type
@@ -78,11 +81,13 @@ public class NetworkInterface : MonoBehaviour
 	{
 		//NetworkReader reader = new NetworkReader(stream);
 
-		int pIndex = stream.ReadNibble();
+		ulong netObjID = stream.ReadNibble();
 		PlayerInput pInput = (PlayerInput)stream.ReadNibble();
 
+		_manager.UpdateClientInput(netObjID, pInput);
+
 		//Debug.Log("Recieved input from p " + pIndex + ": " + pInput);
-		_messageLog.text = "Recieved input from p " + pIndex + ": " + pInput;
+		_messageLog.text = "Input from " + clientid + ": " + pInput;
 	}
 	private void ReceivePlayerSpatial(ulong clientid, NetworkReader stream)
 	{
@@ -93,7 +98,7 @@ public class NetworkInterface : MonoBehaviour
 		float posX = DecompressPositionValue(compPosComp, 12);
 
 		//Debug.Log("Recieved input from p " + pIndex + ": " + pInput);
-		_messageLog.text = "Recieved spatial from p " + pIndex + ": " + posX;
+		_messageLog.text = "Spatial data for " + pIndex + ": " + posX;
 	}
 	private void ReceiveMapEvent(ulong clientid, NetworkReader stream)
 	{
@@ -103,21 +108,21 @@ public class NetworkInterface : MonoBehaviour
 		int cell = (int)stream.ReadBits(6);
 
 		//Debug.Log("Recieved input from p " + pIndex + ": " + pInput);
-		_messageLog.text = "Recieved map evt from p " + pInd + ": " + cell;
+		_messageLog.text = "Map evt: " + cell;
 	}
 
 
 	/* - public functions for players to send info to server - */
-	public void SendPlayerInput(ulong target, int index, PlayerInput input)
+	public void SendPlayerInput(ulong target, ulong netObjId, PlayerInput input)
 	{
-		//Debug.Log("Attempted to send " + input + " for client " + index);
+		_messageLog.text = "Sending input to " + target;
 
 		NetworkBuffer buffer = new NetworkBuffer();
 		NetworkWriter writer = new NetworkWriter(buffer);
 		// message type => 4 bits
 		writer.WriteNibble((byte)MessageType.PLAYER_INPUT);
 		// index => 4 bits
-		writer.WriteNibble((byte)index);
+		writer.WriteNibble((byte)netObjId);
 		// input flags => 4 bits
 		writer.WriteNibble((byte)input);
 

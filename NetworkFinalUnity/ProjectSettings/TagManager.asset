@@ -6,6 +6,7 @@ TagManager:
   tags:
   - MessageLog
   - GameManager
+  - InfoPanel
   layers:
   - Default
   - TransparentFX

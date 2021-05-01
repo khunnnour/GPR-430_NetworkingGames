@@ -14,26 +14,44 @@ using Random = UnityEngine.Random;
 public class TestPlayerController : NetworkBehaviour
 {
 	// networking private
-	private NetworkObject _nObject;
 	private PlayerInput _lastInput; // most recent input
     // local private
     private Rigidbody _rb;
+	private Text _infoText;
+	private ulong _serverID;
 
     public override void NetworkStart()
     {
-		_nObject = GetNetworkObject(NetworkObjectId);
+		GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().ReportIn(this);
 	}
 
     private void Start()
     {
         _rb = GetComponent<Rigidbody>();
         _lastInput ^= _lastInput; // clear last input
+
+		if (IsOwner)
+		{
+			_infoText = GameObject.FindGameObjectWithTag("InfoPanel").GetComponent<Text>();
+			_infoText.text =
+				"OwnerClientId: " + OwnerClientId +
+				"\nNetworkObjectID: " + NetworkObjectId +
+				"\nLocalClientId: " + NetworkManager.Singleton.LocalClientId +
+				"\nServerClientId: " + NetworkManager.Singleton.ServerClientId;
+		}
+
+		_serverID = NetworkManager.Singleton.ServerClientId;
+
 		//NetworkInterface.Instance.SendMapEvent(OwnerClientId, (int)OwnerClientId, 3);
-    }
+	}
 
     private void Update()
     {
-        GetInput();
+		if (IsOwner)
+		{
+			GetInput();
+			Debug.Log("Getting input");
+		}
     }
 
     private void FixedUpdate()
@@ -50,15 +68,15 @@ public class TestPlayerController : NetworkBehaviour
         if (Input.GetKey(KeyCode.A)) _lastInput |= PlayerInput.A;
         if (Input.GetKey(KeyCode.S)) _lastInput |= PlayerInput.S;
         if (Input.GetKey(KeyCode.D)) _lastInput |= PlayerInput.D;
-        // send player input info to server
-        //NetworkInterface.Instance.SendPlayerInput(OwnerClientId,(int)OwnerClientId, _lastInput);
+		// send player input info to server
+		NetworkInterface.Instance.SendPlayerInput(_serverID, NetworkObjectId, _lastInput);
     }
     
     // local simulation
     private void Move()
     {
-        if (!NetworkManager.Singleton.IsServer)
-        {
+        //if (!NetworkManager.Singleton.IsServer)
+        //{
             Vector3 dir=Vector3.zero;
             
             // get direction
@@ -69,7 +87,7 @@ public class TestPlayerController : NetworkBehaviour
             
             // move in that direction
             _rb.MovePosition(transform.position + dir * Time.fixedDeltaTime);
-        }
+       //}
     }
 
 	public void SetInput(PlayerInput pIn)
