@@ -13,14 +13,16 @@ using Random = UnityEngine.Random;
 
 public class TestPlayerController : NetworkBehaviour
 {
-    // networking private
-    private PlayerInput _lastInput; // most recent input
+	// networking private
+	private NetworkObject _nObject;
+	private PlayerInput _lastInput; // most recent input
     // local private
     private Rigidbody _rb;
 
     public override void NetworkStart()
     {
-    }
+		_nObject = GetNetworkObject(NetworkObjectId);
+	}
 
     private void Start()
     {
@@ -69,4 +71,9 @@ public class TestPlayerController : NetworkBehaviour
             _rb.MovePosition(transform.position + dir * Time.fixedDeltaTime);
         }
     }
+
+	public void SetInput(PlayerInput pIn)
+	{
+		_lastInput = pIn;
+	}
 }
