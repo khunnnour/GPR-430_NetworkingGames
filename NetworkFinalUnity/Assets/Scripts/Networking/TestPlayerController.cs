@@ -15,22 +15,22 @@ public class TestPlayerController : NetworkBehaviour
 {
 	// networking private
 	private PlayerInput _lastInput; // most recent input
-    // local private
-    private Rigidbody _rb;
+									// local private
+	private Rigidbody _rb;
 	private Text _infoText;
 	private ulong _serverID;
 
 	public PlayerInput LastInput => _lastInput;
 
-    public override void NetworkStart()
-    {
+	public override void NetworkStart()
+	{
 		GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().ReportIn(this);
 	}
 
-    private void Start()
-    {
-        _rb = GetComponent<Rigidbody>();
-        _lastInput ^= _lastInput; // clear last input
+	private void Start()
+	{
+		_rb = GetComponent<Rigidbody>();
+		_lastInput ^= _lastInput; // clear last input
 
 		if (IsOwner)
 		{
@@ -47,49 +47,46 @@ public class TestPlayerController : NetworkBehaviour
 		//NetworkInterface.Instance.SendMapEvent(OwnerClientId, (int)OwnerClientId, 3);
 	}
 
-    private void Update()
-    {
+	private void Update()
+	{
 		if (IsOwner)
 		{
 			GetInput();
 		}
-    }
+	}
 
-    private void FixedUpdate()
-    {
-        Move();
-    }
-    
-    private void GetInput()
-    {
-        // clear out _lastInput by XOR-ing
-        _lastInput ^= _lastInput;
-        // set flags based on if input is down
-        if (Input.GetKey(KeyCode.W)) _lastInput |= PlayerInput.W;
-        if (Input.GetKey(KeyCode.A)) _lastInput |= PlayerInput.A;
-        if (Input.GetKey(KeyCode.S)) _lastInput |= PlayerInput.S;
-        if (Input.GetKey(KeyCode.D)) _lastInput |= PlayerInput.D;
+	private void FixedUpdate()
+	{
+		Move();
+	}
+
+	private void GetInput()
+	{
+		// clear out _lastInput by XOR-ing
+		_lastInput ^= _lastInput;
+		// set flags based on if input is down
+		if (Input.GetKey(KeyCode.W)) _lastInput |= PlayerInput.W;
+		if (Input.GetKey(KeyCode.A)) _lastInput |= PlayerInput.A;
+		if (Input.GetKey(KeyCode.S)) _lastInput |= PlayerInput.S;
+		if (Input.GetKey(KeyCode.D)) _lastInput |= PlayerInput.D;
 		// send player input info to server
 		NetworkInterface.Instance.SendPlayerInputToServer(_serverID, NetworkObjectId, _lastInput);
-    }
-    
-    // local simulation
-    private void Move()
-    {
-        //if (!NetworkManager.Singleton.IsServer)
-        //{
-            Vector3 dir=Vector3.zero;
-            
-            // get direction
-            if (_lastInput.HasFlag(PlayerInput.W)) dir += Vector3.forward;
-            if (_lastInput.HasFlag(PlayerInput.A)) dir += Vector3.left;
-            if (_lastInput.HasFlag(PlayerInput.S)) dir += Vector3.back;
-            if (_lastInput.HasFlag(PlayerInput.D)) dir += Vector3.right;
-            
-            // move in that direction
-            _rb.MovePosition(transform.position + dir * Time.fixedDeltaTime);
-       //}
-    }
+	}
+
+	// local simulation
+	private void Move()
+	{
+		Vector3 dir = Vector3.zero;
+
+		// get direction
+		if (_lastInput.HasFlag(PlayerInput.W)) dir += Vector3.forward;
+		if (_lastInput.HasFlag(PlayerInput.A)) dir += Vector3.left;
+		if (_lastInput.HasFlag(PlayerInput.S)) dir += Vector3.back;
+		if (_lastInput.HasFlag(PlayerInput.D)) dir += Vector3.right;
+
+		// move in that direction
+		_rb.AddForceAtPosition(dir * Time.fixedDeltaTime * 300f, transform.position + 0.5f * Vector3.up);
+	}
 
 	public void SetInput(PlayerInput pIn)
 	{

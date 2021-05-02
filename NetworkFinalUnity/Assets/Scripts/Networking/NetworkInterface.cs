@@ -57,7 +57,7 @@ public class NetworkInterface : MonoBehaviour
 
 	private void ProcessUnnamedMessage(ulong clientid, Stream stream)
 	{
-		Debug.Log("Unnamed Message received (" + stream.Length + " bytes) from " + clientid);
+		//Debug.Log("Unnamed Message received (" + stream.Length + " bytes) from " + clientid);
 
 		NetworkReader reader = new NetworkReader(stream);
 		// get message type
@@ -135,6 +135,10 @@ public class NetworkInterface : MonoBehaviour
 		writer.WriteBits(CompressPositionValue(pos.y, 13), 13);
 		writer.WriteBits(CompressPositionValue(pos.z, 13), 13);
 		// rot => 3*13 bits
+		Vector3 rot = t.rotation.eulerAngles;
+		writer.WriteBits(CompressRotationValue(rot.x, 13), 13);
+		writer.WriteBits(CompressRotationValue(rot.y, 13), 13);
+		writer.WriteBits(CompressRotationValue(rot.z, 13), 13);
 
 		// get all of the client ids
 		List<NetworkClient> clients = NetworkManager.Singleton.ConnectedClientsList;
@@ -147,7 +151,7 @@ public class NetworkInterface : MonoBehaviour
 		// send message to all connected clients
 		CustomMessagingManager.SendUnnamedMessage(clientIds, buffer, NetworkChannel.DefaultMessage);
 
-		_messageLog.text = "Sending position: " + pos.ToString("F3");
+		_messageLog.text = "Pos: " + pos.ToString("F4") + "\nRot: " + t.rotation.ToString("F4");
 	}
 
 
@@ -170,19 +174,29 @@ public class NetworkInterface : MonoBehaviour
 	{
 		// read in player index
 		ulong netObjID = stream.ReadNibble();
+		
 		// read in position
-		int compPosComp = (int)stream.ReadBits(13);
-		float posX = DecompressPositionValue(compPosComp, 13);
-		compPosComp = (int)stream.ReadBits(13);
-		float posY = DecompressPositionValue(compPosComp, 13);
-		compPosComp = (int)stream.ReadBits(13);
-		float posZ = DecompressPositionValue(compPosComp, 13);
+		int compPosVal = (int)stream.ReadBits(13);
+		float posX = DecompressPositionValue(compPosVal, 13);
+		compPosVal = (int)stream.ReadBits(13);
+		float posY = DecompressPositionValue(compPosVal, 13);
+		compPosVal = (int)stream.ReadBits(13);
+		float posZ = DecompressPositionValue(compPosVal, 13);
 		Vector3 pos = new Vector3(posX, posY, posZ);
+
+		// read in rotation
+		int compRotVal = (int)stream.ReadBits(13);
+		float rotX = DecompressRotationValue(compRotVal, 13);
+		compRotVal = (int)stream.ReadBits(13);
+		float rotY = DecompressRotationValue(compRotVal, 13);
+		compRotVal = (int)stream.ReadBits(13);
+		float rotZ = DecompressRotationValue(compRotVal, 13);
+		Quaternion rot = Quaternion.Euler(rotX, rotY, rotZ);
 
 		_manager.UpdateClientSpatial(netObjID, pos);
 
 		//Debug.Log("Spatial from " + clientid + ": " + pos);
-		_messageLog.text = "Spatial for " + netObjID + ": " + pos.ToString("F3");
+		_messageLog.text = "Pos: " + pos.ToString("F4") + "\nRot: " + rot.ToString("F4");
 	}
 	private void ReceiveMapEvent(ulong clientid, NetworkReader stream)
 	{
@@ -253,17 +267,17 @@ public class NetworkInterface : MonoBehaviour
 		return ret;
 	}
 
-	//const float rotMax = 1f;
+	const float rotMax = 360f;
 	private ulong CompressRotationValue(float val, int bits)
 	{
 		int maxVal = (2 << (bits - 1)) - 1;
-		ulong compressed = (ulong)Mathf.RoundToInt(val * (float)maxVal);
+		ulong compressed = (ulong)Mathf.RoundToInt(val / rotMax * (float)maxVal);
 		return compressed;
 	}
 	private float DecompressRotationValue(int val, int bits)
 	{
 		int maxVal = (2 << (bits - 1)) - 1;
-		float ratio = (float)val / (float)maxVal;
+		float ratio = (float)val / (float)maxVal * rotMax;
 		return ratio;
 	}
 }

@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-	public float inputUpdateInterval = 0.0333f; // every 2 frames at 60fps
-	public float spatialUpdateInterval = 0.1667f;   // every 10 frames at 60fps
+	public float inputUpdateInterval	= 0.0500f;	// every 3  frames at 60fps
+	public float spatialUpdateInterval	= 0.5000f;	// every 30 frames at 60fps
 
 	private List<TestPlayerController> controllers;
 	private float _nextInputTime, _nextSpatialTime; // time to update respective values
@@ -14,12 +14,13 @@ public class GameManager : MonoBehaviour
 	private void Awake()
 	{
 		controllers = new List<TestPlayerController>();
+		Application.targetFrameRate = 60;
 	}
 
 	private void Start()
 	{
-		Debug.Log("LocalClientId: " + NetworkManager.Singleton.LocalClientId +
-				"ServerClientId: " + NetworkManager.Singleton.ServerClientId);
+		//Debug.Log("LocalClientId: " + NetworkManager.Singleton.LocalClientId +
+		//		"ServerClientId: " + NetworkManager.Singleton.ServerClientId);
 
 		_nextInputTime = -1;
 		_nextSpatialTime = -1;
@@ -81,8 +82,8 @@ public class GameManager : MonoBehaviour
 				continue;
 			}
 
-			// set last input for the correct controller
-			if (controllers[i].NetworkObjectId == netObjId)
+			// set last input for the correct controller (not self)
+			if (controllers[i].OwnerClientId != NetworkManager.Singleton.LocalClientId && controllers[i].NetworkObjectId == netObjId)
 			{
 				controllers[i].SetInput(pIn);
 			}
