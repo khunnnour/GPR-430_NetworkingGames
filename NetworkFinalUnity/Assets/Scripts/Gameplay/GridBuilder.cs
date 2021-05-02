@@ -15,7 +15,7 @@ public class GridBuilder : MonoBehaviour
     void Start()
     {
         BuildGrid();
-        
+        TimerController.instance.BeginTimer();
     }
 
     private void BuildGrid() 
