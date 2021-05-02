@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour
 			}
 		}
 	}
-	public void UpdateClientSpatial(ulong netObjId, Vector3 pos)
+	public void UpdateClientSpatial(ulong netObjId, Vector3 pos, Quaternion rot)
 	{
 		Debug.Log("Updating spatial for net object " + netObjId + " in list of " + controllers.Count);
 		// get controller from list
@@ -107,6 +107,7 @@ public class GameManager : MonoBehaviour
 			if (controllers[i].NetworkObjectId == netObjId)
 			{
 				controllers[i].transform.position = pos;
+				controllers[i].transform.rotation = rot;
 			}
 		}
 

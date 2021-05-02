@@ -88,8 +88,8 @@ public class NetworkInterface : MonoBehaviour
 		writer.WriteNibble((byte)MessageType.MAP_EVENT);
 		// pack index => 2 bits
 		writer.WriteBits((byte)index, 2);
-		// cell => 6 bits
-		writer.WriteBits((byte)cell, 6);
+		// cell => 8 bits
+		writer.WriteByte((byte)cell);
 
 		CustomMessagingManager.SendUnnamedMessage(target, buffer, NetworkChannel.DefaultMessage);
 	}
@@ -193,7 +193,7 @@ public class NetworkInterface : MonoBehaviour
 		float rotZ = DecompressRotationValue(compRotVal, 13);
 		Quaternion rot = Quaternion.Euler(rotX, rotY, rotZ);
 
-		_manager.UpdateClientSpatial(netObjID, pos);
+		_manager.UpdateClientSpatial(netObjID, pos, rot);
 
 		//Debug.Log("Spatial from " + clientid + ": " + pos);
 		_messageLog.text = "Pos: " + pos.ToString("F4") + "\nRot: " + rot.ToString("F4");
@@ -203,7 +203,7 @@ public class NetworkInterface : MonoBehaviour
 		//NetworkReader reader = new NetworkReader(stream);
 
 		int pInd = (int)stream.ReadBits(2);
-		int cell = (int)stream.ReadBits(6);
+		int cell = (int)stream.ReadByte();
 
 		//Debug.Log("Recieved input from p " + pIndex + ": " + pInput);
 		_messageLog.text = "Map evt: " + cell;
