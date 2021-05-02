@@ -25,13 +25,13 @@ public class TimerController : MonoBehaviour
     void Start()
     {
         timer.text = "Time: 00:00.00";
-        isTimerPlaying = false;
+        //isTimerPlaying = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (elapsedTime >= 60.0f) 
+        if (elapsedTime >= 60.0f && isTimerPlaying) 
         {
             EndTimer();
         }
@@ -60,6 +60,6 @@ public class TimerController : MonoBehaviour
             timer.text = timePlayingStr;
             yield return null;
         }
-        yield return null;
+        //yield return null;
     }
 }
