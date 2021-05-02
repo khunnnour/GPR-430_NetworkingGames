@@ -5,13 +5,13 @@ using UnityEngine;
 public class PlayerScript : MonoBehaviour
 {
     public GameObject player;
-    public int playerID;
+    public ulong playerID;
     public Color generatedColor;
     Color playerColor;
     // Start is called before the first frame update
     void Start()
     {
-        playerID = 1;
+        playerID = GetComponent<NetworkedPlayerController>().NetworkObjectId;
         generatedColor = GeneratePlayerColor();
         var cubeRenderer = player.GetComponent<Renderer>();
         cubeRenderer.material.SetColor("_Color", generatedColor);

@@ -15,7 +15,7 @@ public class GridBuilder : MonoBehaviour
     void Start()
     {
         BuildGrid();
-        TimerController.instance.BeginTimer();
+        //TimerController.instance.BeginTimer();
     }
 
     private void BuildGrid() 
@@ -27,7 +27,7 @@ public class GridBuilder : MonoBehaviour
                 Vector3 pos = new Vector3(x * 1.5f, 0, z * 1.5f);//platform 1, 0.2, 1 has x +.05 and z +.05
                 if (x == 0 && z == 0) 
                 {
-                    SpawnPlayer();
+                    //SpawnPlayer();
                     //spawnPos = pos;
                     //GameObject newPlayer = Instantiate(player, spawnPos, Quaternion.identity);
                 }

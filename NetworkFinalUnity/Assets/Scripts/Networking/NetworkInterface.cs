@@ -32,7 +32,7 @@ public class NetworkInterface : MonoBehaviour
 	public static NetworkInterface Instance;
 
 	private NetworkConfig _config;
-	private GameManager _manager;
+	private NetworkedGameManager _manager;
 	private Text _messageLog;
 
 	private void Awake()
@@ -43,7 +43,7 @@ public class NetworkInterface : MonoBehaviour
 	public void Start()
 	{
 		_config = NetworkManager.Singleton.NetworkConfig;
-		_manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+		_manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<NetworkedGameManager>();
 
 		_messageLog = GameObject.FindWithTag("MessageLog").GetComponent<Text>();
 		CustomMessagingManager.OnUnnamedMessage += ProcessUnnamedMessage;
@@ -247,8 +247,8 @@ public class NetworkInterface : MonoBehaviour
 	//}
 
 
-	const float posMin = -10f;
-	const float posMax = 10f;
+	const float posMin = -15f;
+	const float posMax = 25f;
 	const float posRange = posMax- posMin;
 	private ulong CompressPositionValue(float val, int bits)
 	{

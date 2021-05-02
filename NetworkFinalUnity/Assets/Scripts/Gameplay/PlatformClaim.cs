@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class PlatformClaim : MonoBehaviour
 {
-    ulong owner;
-    private int pOwner;
+    private ulong pOwner;
     Color playerClaim;
     // Start is called before the first frame update
     void Start()
@@ -19,10 +18,10 @@ public class PlatformClaim : MonoBehaviour
         
     }
 
-    public void SetOwner() 
+    public void SetOwner(PlayerScript playerHit) 
     {
-        pOwner = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>().playerID;
-        playerClaim = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>().generatedColor;
+        pOwner = playerHit.playerID;
+        playerClaim = playerHit.generatedColor;
         var tileRenderer = this.GetComponent<Renderer>();
         tileRenderer.material.SetColor("_Color", playerClaim);
     }
@@ -30,13 +29,15 @@ public class PlatformClaim : MonoBehaviour
     private void OnCollisionEnter(Collision collision) 
     {
         //use ulong owner to specify when object is owned already in final version
-        if (pOwner == 1)
+        PlayerScript hit = collision.collider.GetComponent<PlayerScript>();
+
+        if (pOwner == hit.playerID)
         {
             Debug.Log("Owned Collision");
         }
         else 
         {
-            SetOwner();
+            SetOwner(hit);
             Debug.Log("Unowned Collidision");
         }
         
