@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-	public float inputUpdateInterval   = 0.0333f;	// every 2 frames
-	public float spatialUpdateInterval = 0.1667f;	// every 10 frames
+	public float inputUpdateInterval = 0.0333f; // every 2 frames at 60fps
+	public float spatialUpdateInterval = 0.1667f;   // every 10 frames at 60fps
 
 	private List<TestPlayerController> controllers;
-	private float _nextInputTime,_nextSpatialTime; // time to update respective values
+	private float _nextInputTime, _nextSpatialTime; // time to update respective values
 
 	private void Awake()
 	{
@@ -27,66 +27,91 @@ public class GameManager : MonoBehaviour
 
 	private void Update()
 	{
-		if (NetworkManager.Singleton.IsServer)
+		if (NetworkManager.Singleton.IsServer) // only update server if server
 			UpdateServer();
 	}
 
+	// check if time to synchronize clients
 	private void UpdateServer()
 	{
 		// check if time to update player inputs
 		if (Time.time > _nextInputTime)
 		{
+			//Debug.Log("Broadcasted inputs to clients");
+
+			// broadcast last input for all controllers connected
+			foreach (TestPlayerController controller in controllers)
+				NetworkInterface.Instance.BroadcastPlayerInput(controller.NetworkObjectId, controller.LastInput);
+
 			_nextInputTime = Time.time + inputUpdateInterval;
 		}
 
 		// check if time to update player spatials
 		if (Time.time > _nextSpatialTime)
 		{
+			// broadcast current spatial for all controllers
+			foreach (TestPlayerController controller in controllers)
+				NetworkInterface.Instance.BroadcastPlayerSpatial(controller.NetworkObjectId, controller.transform);
+
 			_nextSpatialTime = Time.time + spatialUpdateInterval;
 		}
 	}
 
+	// for controllers to report in to the gamemanager when they are created
 	public void ReportIn(TestPlayerController cont)
 	{
 		if (!controllers.Contains(cont))
 		{
 			controllers.Add(cont);
-			Debug.Log("Added controller for " + cont.OwnerClientId);
+			//Debug.Log("Added controller for " + cont.OwnerClientId);
 		}
 	}
 
 	public void UpdateClientInput(ulong netObjId, PlayerInput pIn)
 	{
-		//TestPlayerController controller=null;
+		//Debug.Log("Updating input for net object " + netObjId + " in list of " + controllers.Count);
 		// get controller from list
-		for(int i=0;i<controllers.Count;i++)
+		for (int i = 0; i < controllers.Count; i++)
 		{
 			// check if player is still connected
-			if (controllers[i])
+			if (!controllers[i])
 			{
+				// remove it from the list and skip
 				controllers.RemoveAt(i);
 				continue;
 			}
 
+			// set last input for the correct controller
 			if (controllers[i].NetworkObjectId == netObjId)
 			{
-				//controller = controllers[i];
 				controllers[i].SetInput(pIn);
 			}
 		}
-
-		//// dont set actual player's input
-		//if (controller.IsLocalPlayer)
-		//{
-		//	NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out NetworkClient nClient);
-		//	nClient.PlayerObject.GetComponent<TestPlayerController>().SetInput(pIn);
-		//}
 	}
-	public void UpdateClientSpatial(ulong clientId, Transform pT)
+	public void UpdateClientSpatial(ulong netObjId, Vector3 pos)
 	{
-		NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out NetworkClient nClient);
-		nClient.PlayerObject.transform.position = pT.position;
-		nClient.PlayerObject.transform.rotation = pT.rotation;
+		Debug.Log("Updating spatial for net object " + netObjId + " in list of " + controllers.Count);
+		// get controller from list
+		for (int i = 0; i < controllers.Count; i++)
+		{
+			// check if player is still connected
+			if (!controllers[i])
+			{
+				// remove it from the list and skip
+				controllers.RemoveAt(i);
+				continue;
+			}
+
+			// set last input for the correct controller
+			if (controllers[i].NetworkObjectId == netObjId)
+			{
+				controllers[i].transform.position = pos;
+			}
+		}
+
+		//NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out NetworkClient nClient);
+		//nClient.PlayerObject.transform.position = pT.position;
+		//nClient.PlayerObject.transform.rotation = pT.rotation;
 	}
 
 	void OnGUI()
@@ -108,7 +133,7 @@ public class GameManager : MonoBehaviour
 	{
 		if (GUILayout.Button("Client")) NetworkManager.Singleton.StartClient();
 		if (GUILayout.Button("Server")) NetworkManager.Singleton.StartServer();
-	}		
+	}
 
 	static void StatusLabels()
 	{

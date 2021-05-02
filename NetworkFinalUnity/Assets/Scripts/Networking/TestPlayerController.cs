@@ -20,6 +20,8 @@ public class TestPlayerController : NetworkBehaviour
 	private Text _infoText;
 	private ulong _serverID;
 
+	public PlayerInput LastInput => _lastInput;
+
     public override void NetworkStart()
     {
 		GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().ReportIn(this);
@@ -50,7 +52,6 @@ public class TestPlayerController : NetworkBehaviour
 		if (IsOwner)
 		{
 			GetInput();
-			Debug.Log("Getting input");
 		}
     }
 
@@ -69,7 +70,7 @@ public class TestPlayerController : NetworkBehaviour
         if (Input.GetKey(KeyCode.S)) _lastInput |= PlayerInput.S;
         if (Input.GetKey(KeyCode.D)) _lastInput |= PlayerInput.D;
 		// send player input info to server
-		NetworkInterface.Instance.SendPlayerInput(_serverID, NetworkObjectId, _lastInput);
+		NetworkInterface.Instance.SendPlayerInputToServer(_serverID, NetworkObjectId, _lastInput);
     }
     
     // local simulation
@@ -92,6 +93,7 @@ public class TestPlayerController : NetworkBehaviour
 
 	public void SetInput(PlayerInput pIn)
 	{
+		//Debug.Log("Got input set");
 		_lastInput = pIn;
 	}
 }

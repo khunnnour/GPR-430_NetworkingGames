@@ -69,7 +69,7 @@ namespace HelloWorld
 				//Debug.Log("Message sent");
 				//NetworkInterface.Instance.SendMapEvent(OwnerClientId, 2, 56);
 				//NetworkInterface.Instance.SendMapEvent(OwnerClientId, 2, 56);
-				NetworkInterface.Instance.SendPlayerSpatial(OwnerClientId, 2, transform);
+				//NetworkInterface.Instance.SendPlayerSpatialToServer(OwnerClientId, 2, transform);
 			}
         }
 
