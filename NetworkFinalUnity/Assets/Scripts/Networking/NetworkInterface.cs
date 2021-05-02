@@ -79,7 +79,7 @@ public class NetworkInterface : MonoBehaviour
 	}
 
 	/* - Broadcast data to all connected clients - */
-	public void SendMapEvent(ulong target, int index, int cell)
+	public void BroadcastMapEvent(ulong netObjId, int cell)
 	{
 		NetworkBuffer buffer = new NetworkBuffer();
 		NetworkWriter writer = new NetworkWriter(buffer);
@@ -87,11 +87,22 @@ public class NetworkInterface : MonoBehaviour
 		// message type => 4 bits
 		writer.WriteNibble((byte)MessageType.MAP_EVENT);
 		// pack index => 2 bits
-		writer.WriteBits((byte)index, 2);
+		writer.WriteNibble((byte)netObjId);
 		// cell => 8 bits
 		writer.WriteByte((byte)cell);
 
-		CustomMessagingManager.SendUnnamedMessage(target, buffer, NetworkChannel.DefaultMessage);
+		// get all of the client ids
+		List<NetworkClient> clients = NetworkManager.Singleton.ConnectedClientsList;
+
+		// turn to list of client ids
+		List<ulong> clientIds = new List<ulong>();
+		foreach (NetworkClient client in clients)
+			clientIds.Add(client.ClientId);
+
+		//Debug.Log("Broadcasting input for " + netObjId + " (" + cell + ") to " + clientIds[0] + " clients");
+
+		// send message to all connected clients
+		CustomMessagingManager.SendUnnamedMessage(clientIds, buffer, NetworkChannel.DefaultMessage);
 	}
 
 	public void BroadcastPlayerInput(ulong netObjId, PlayerInput input)
@@ -201,11 +212,14 @@ public class NetworkInterface : MonoBehaviour
 	private void ReceiveMapEvent(ulong clientid, NetworkReader stream)
 	{
 		//NetworkReader reader = new NetworkReader(stream);
+		// read in player index
+		ulong netObjID = stream.ReadNibble();
 
-		int pInd = (int)stream.ReadBits(2);
 		int cell = (int)stream.ReadByte();
 
-		//Debug.Log("Recieved input from p " + pIndex + ": " + pInput);
+		_manager.UpdateClientMap(netObjID, cell);
+
+		Debug.Log("Recieved input from p " + cell + ": " + netObjID);
 		_messageLog.text = "Map evt: " + cell;
 	}
 

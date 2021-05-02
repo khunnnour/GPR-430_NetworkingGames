@@ -11,6 +11,9 @@ public class NetworkedGameManager : MonoBehaviour
 	private List<NetworkedPlayerController> controllers;
 	private float _nextInputTime, _nextSpatialTime; // time to update respective values
 
+	//public GameObject gridBuilder;
+	public GridBuilder builderScript;
+
 	private void Awake()
 	{
 		controllers = new List<NetworkedPlayerController>();
@@ -21,7 +24,6 @@ public class NetworkedGameManager : MonoBehaviour
 	{
 		//Debug.Log("LocalClientId: " + NetworkManager.Singleton.LocalClientId +
 		//		"ServerClientId: " + NetworkManager.Singleton.ServerClientId);
-
 		_nextInputTime = -1;
 		_nextSpatialTime = -1;
 	}
@@ -91,7 +93,7 @@ public class NetworkedGameManager : MonoBehaviour
 	}
 	public void UpdateClientSpatial(ulong netObjId, Vector3 pos, Quaternion rot)
 	{
-		Debug.Log("Updating spatial for net object " + netObjId + " in list of " + controllers.Count);
+		//Debug.Log("Updating spatial for net object " + netObjId + " in list of " + controllers.Count);
 		// get controller from list
 		for (int i = 0; i < controllers.Count; i++)
 		{
@@ -114,6 +116,26 @@ public class NetworkedGameManager : MonoBehaviour
 		//NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out NetworkClient nClient);
 		//nClient.PlayerObject.transform.position = pT.position;
 		//nClient.PlayerObject.transform.rotation = pT.rotation;
+	}
+	public void UpdateClientMap(ulong netObjId, int index) 
+	{
+		for(int i = 0; i < controllers.Count; i++)
+		{
+			// check if player is still connected
+			if (!controllers[i])
+			{
+				// remove it from the list and skip
+				controllers.RemoveAt(i);
+				continue;
+			}
+
+			// set last input for the correct controller
+			if (controllers[i].NetworkObjectId == netObjId)
+			{
+				Debug.Log("UpdateClientMap");
+				builderScript.UpdateGrid(controllers[i].GetComponent<PlayerScript>(), index);
+			}
+		}
 	}
 
 	void OnGUI()
