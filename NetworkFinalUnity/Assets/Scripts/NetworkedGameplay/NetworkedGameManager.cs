@@ -2,11 +2,14 @@
 using MLAPI.Connection;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class NetworkedGameManager : MonoBehaviour
 {
 	public float inputUpdateInterval = 0.0500f; // every 3  frames at 60fps
 	public float spatialUpdateInterval = 0.5000f;   // every 30 frames at 60fps
+
+	public InputField ipField;
 
 	private List<NetworkedPlayerController> controllers;
 	private float _nextInputTime, _nextSpatialTime; // time to update respective values
@@ -158,9 +161,36 @@ public class NetworkedGameManager : MonoBehaviour
 				controllers[i].GetComponent<PlayerScript>().generatedColor = color;
 				//controllers[i].GetComponent<PlayerScript>().playerColor = color;
 				controllers[i].GetComponent<PlayerScript>().UpdateColor();
-				//controllers[i].transform.position = pos;
-				//controllers[i].transform.rotation = rot;
 			}
+		}
+	}
+
+	/// <summary>
+	/// for collecting the colors of connected controllers to send to a new client
+	/// </summary>
+	/// <param name="netObjIds">List to fill w net object ids</param>
+	/// <param name="colors">List to fill w colors</param>
+	public void RetrieveClientColors(ref List<ulong> netObjIds, ref List<Color> colors)
+	{
+		// reset whatever is in the provided lists
+		netObjIds = new List<ulong>();
+		colors = new List<Color>();
+
+		// cycle thru all controllers
+		for (int i = 0; i < controllers.Count; i++)
+		{
+			// check if player is still connected
+			if (!controllers[i])
+			{
+				// remove it from the list and skip
+				controllers.RemoveAt(i);
+				continue;
+			}
+
+			// add the net object id
+			netObjIds.Add(controllers[i].NetworkObjectId);
+			// add the repective color
+			colors.Add(controllers[i].GetComponent<PlayerScript>().generatedColor);
 		}
 	}
 
@@ -189,7 +219,7 @@ public class NetworkedGameManager : MonoBehaviour
 	{
 		var mode = NetworkManager.Singleton.IsServer ? "Server" : "Client";
 
-		GUILayout.Label("Transport: " + NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
+		//GUILayout.Label("Server IP: " + NetworkManager.Singleton.NetworkConfig.NetworkTransport.address);
 		GUILayout.Label("Mode: " + mode);
 	}
 }

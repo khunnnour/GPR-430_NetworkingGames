@@ -325,7 +325,7 @@ public class NetworkInterface : MonoBehaviour
 	}
 	private float DecompressPositionValue(int val, int bits)
 	{
-		int maxVal = (2 << (bits - 1)) - 1;
+		int maxVal = (2 << (bits - 1)) - 1; // bitshift to get max value in provided number of bits
 		float ratio = (float)val / (float)maxVal; // get the ratio
 		float serial = ratio * posRange; // get the serialized value
 		float ret = serial + posMin; // convert back to actual value
