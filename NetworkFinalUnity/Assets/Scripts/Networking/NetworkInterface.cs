@@ -24,7 +24,8 @@ public enum MessageType
 {
 	PLAYER_INPUT,
 	PLAYER_SPATIAL,
-	MAP_EVENT
+	MAP_EVENT,
+	PLAYER_COLOR
 }
 
 public class NetworkInterface : MonoBehaviour
@@ -74,6 +75,9 @@ public class NetworkInterface : MonoBehaviour
 				break;
 			case MessageType.MAP_EVENT:
 				ReceiveMapEvent(clientid, reader);
+				break;
+			case MessageType.PLAYER_COLOR:
+				ReceivePlayerColor(clientid, reader);
 				break;
 		}
 	}
@@ -162,7 +166,35 @@ public class NetworkInterface : MonoBehaviour
 		// send message to all connected clients
 		CustomMessagingManager.SendUnnamedMessage(clientIds, buffer, NetworkChannel.DefaultMessage);
 
-		_messageLog.text = "Pos: " + pos.ToString("F4") + "\nRot: " + t.rotation.ToString("F4");
+		//_messageLog.text = "Pos: " + pos.ToString("F4") + "\nRot: " + t.rotation.ToString("F4");
+	}
+
+	public void BroadcastPlayerColor(ulong netObjId, Color color)
+	{
+		NetworkBuffer buffer = new NetworkBuffer();
+		NetworkWriter writer = new NetworkWriter(buffer);
+
+		// message type => 4 bits
+		writer.WriteNibble((byte)MessageType.PLAYER_COLOR);
+		// net obj id => 4 bits
+		writer.WriteNibble((byte)netObjId);
+		// pos => 3*13 bits
+		writer.WriteByte((byte)CompressColorValue(color.r, 8));
+		writer.WriteByte((byte)CompressColorValue(color.g, 8));
+		writer.WriteByte((byte)CompressColorValue(color.b, 8));
+
+		// get all of the client ids
+		List<NetworkClient> clients = NetworkManager.Singleton.ConnectedClientsList;
+
+		// turn to list of client ids
+		List<ulong> clientIds = new List<ulong>();
+		foreach (NetworkClient client in clients)
+			clientIds.Add(client.ClientId);
+
+		// send message to all connected clients
+		CustomMessagingManager.SendUnnamedMessage(clientIds, buffer, NetworkChannel.DefaultMessage);
+
+		_messageLog.text = color.ToString();
 	}
 
 
@@ -207,7 +239,7 @@ public class NetworkInterface : MonoBehaviour
 		_manager.UpdateClientSpatial(netObjID, pos, rot);
 
 		//Debug.Log("Spatial from " + clientid + ": " + pos);
-		_messageLog.text = "Pos: " + pos.ToString("F4") + "\nRot: " + rot.ToString("F4");
+		//_messageLog.text = "Pos: " + pos.ToString("F4") + "\nRot: " + rot.ToString("F4");
 	}
 	private void ReceiveMapEvent(ulong clientid, NetworkReader stream)
 	{
@@ -220,9 +252,28 @@ public class NetworkInterface : MonoBehaviour
 		_manager.UpdateClientMap(netObjID, cell);
 
 		Debug.Log("Recieved input from p " + cell + ": " + netObjID);
-		_messageLog.text = "Map evt: " + cell;
+		//_messageLog.text = "Map evt: " + cell;
 	}
 
+	private void ReceivePlayerColor(ulong clientid, NetworkReader stream)
+	{
+		// read in player index
+		ulong netObjID = stream.ReadNibble();
+
+		// read in position
+		int compColorVal = (int)stream.ReadByte();
+		float colR = DecompressColorValue(compColorVal, 8);
+		compColorVal = (int)stream.ReadByte();
+		float colG = DecompressColorValue(compColorVal, 8);
+		compColorVal = (int)stream.ReadByte();
+		float colB = DecompressColorValue(compColorVal, 8);
+		Color plColor = new Color(colR, colG, colB);
+
+		_manager.UpdateClientColor(netObjID, plColor);
+
+		//Debug.Log("Spatial from " + clientid + ": " + pos);
+		_messageLog.text = plColor.ToString();
+	}
 
 	/* - public functions for players to send info to server - */
 	public void SendPlayerInputToServer(ulong target, ulong netObjId, PlayerInput input)
@@ -293,5 +344,19 @@ public class NetworkInterface : MonoBehaviour
 		int maxVal = (2 << (bits - 1)) - 1;
 		float ratio = (float)val / (float)maxVal * rotMax;
 		return ratio;
+	}
+
+	private ulong CompressColorValue(float val, int bits) 
+	{
+		int maxVal = (2 << (bits - 1)) - 1;
+		ulong compressed = (ulong)Mathf.RoundToInt(val * (float)maxVal);
+		return compressed;
+	}
+
+	private float DecompressColorValue(int val, int bits)
+	{
+		int maxVal = (2 << (bits - 1)) - 1;
+		return ((float)val / (float)maxVal);
+		//return color;
 	}
 }

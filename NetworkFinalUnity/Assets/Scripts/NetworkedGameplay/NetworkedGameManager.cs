@@ -138,6 +138,32 @@ public class NetworkedGameManager : MonoBehaviour
 		}
 	}
 
+	public void UpdateClientColor(ulong netObjId, Color color)
+	{
+		//Debug.Log("Updating spatial for net object " + netObjId + " in list of " + controllers.Count);
+		// get controller from list
+		for (int i = 0; i < controllers.Count; i++)
+		{
+			// check if player is still connected
+			if (!controllers[i])
+			{
+				// remove it from the list and skip
+				controllers.RemoveAt(i);
+				continue;
+			}
+
+			// set last input for the correct controller
+			if (controllers[i].NetworkObjectId == netObjId)
+			{
+				controllers[i].GetComponent<PlayerScript>().generatedColor = color;
+				//controllers[i].GetComponent<PlayerScript>().playerColor = color;
+				controllers[i].GetComponent<PlayerScript>().UpdateColor();
+				//controllers[i].transform.position = pos;
+				//controllers[i].transform.rotation = rot;
+			}
+		}
+	}
+
 	void OnGUI()
 	{
 		GUILayout.BeginArea(new Rect(10, 10, 300, 300));
