@@ -8,6 +8,7 @@ public class PlayerScript : MonoBehaviour
     public GameObject player;
     public ulong playerID;
     public Color generatedColor;
+    public int playerScore;
     //public Color playerColor;
     // Start is called before the first frame update
     void Start()
