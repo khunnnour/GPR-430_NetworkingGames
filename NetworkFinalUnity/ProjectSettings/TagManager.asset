@@ -8,6 +8,8 @@ TagManager:
   - GameManager
   - InfoPanel
   - Score
+  - StartGame
+  - StartGameCanvas
   layers:
   - Default
   - TransparentFX
