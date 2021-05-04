@@ -1,11 +1,15 @@
 ﻿using MLAPI;
 using MLAPI.Transports.UNET;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class NetworkedGameManager : MonoBehaviour
 {
+	//public GameObject gridBuilder;
+	public GridBuilder builderScript;
+
 	[Header("Server Update Settings")]
 	[Tooltip("How long in sec between sending player inputs")]
 	public float inputUpdateInterval   = 0.0333f;	// every 2  frames at 60fps (or 30 times/sec)
@@ -16,11 +20,11 @@ public class NetworkedGameManager : MonoBehaviour
 	public GameObject startPanel;
 	public InputField ipField;
 
+	private GameObject startButton;
+	private TMP_Text endText;
 	private List<NetworkedPlayerController> controllers;
 	private float _nextInputTime, _nextSpatialTime; // time to update respective values
-
-	//public GameObject gridBuilder;
-	public GridBuilder builderScript;
+	private bool _gameStarted;
 
 	private void Awake()
 	{
@@ -34,6 +38,15 @@ public class NetworkedGameManager : MonoBehaviour
 		//		"ServerClientId: " + NetworkManager.Singleton.ServerClientId);
 		_nextInputTime = -1;
 		_nextSpatialTime = -1;
+
+		startButton = GameObject.FindGameObjectWithTag("StartGame");
+		if (NetworkManager.Singleton.IsServer)
+			startButton.SetActive(false);
+
+		endText = GameObject.FindGameObjectWithTag("Finish").GetComponent<TMP_Text>();
+		endText.transform.parent.gameObject.SetActive(false);
+
+		_gameStarted = false;
 	}
 
 	private void Update()
@@ -74,8 +87,18 @@ public class NetworkedGameManager : MonoBehaviour
 		if (!controllers.Contains(cont))
 		{
 			controllers.Add(cont);
-			//Debug.Log("Added controller for " + cont.OwnerClientId);
+
+			if (NetworkManager.Singleton.IsServer)
+				cont.transform.position = GetRngPos();
 		}
+	}
+	private Vector3 GetRngPos()
+	{
+		return new Vector3(
+			UnityEngine.Random.Range(1.0f,21.5f),
+			2f,
+			UnityEngine.Random.Range(1.0f, 21.5f)
+			);
 	}
 
 	public void UpdateClientInput(ulong netObjId, PlayerInput pIn)
@@ -238,6 +261,78 @@ public class NetworkedGameManager : MonoBehaviour
 		if (GUILayout.Button("Client")) NetworkManager.Singleton.StartClient();
 		if (GUILayout.Button("Server")) NetworkManager.Singleton.StartServer();
 	}*/
+
+	// (client) send start game message
+	public void SendStartRequest()
+	{
+		if(NetworkManager.Singleton.IsClient)
+		{
+			NetworkInterface.Instance.SendStartRequestToServer(NetworkManager.Singleton.ServerClientId);
+			startButton.GetComponent<Button>().interactable = false;
+		}
+	}
+
+	// (server) tries to start the game if not started already
+	public void TryStartGame()
+	{
+		// start game if not started
+		if(!_gameStarted)
+		{
+			// broadcast message to start
+			NetworkInterface.Instance.BroadcastStartMessage();
+			StartGame();
+		}
+	}
+
+	// starts game functionality
+	public void StartGame()
+	{
+		// start game and hid start button
+		_gameStarted = true;
+		startButton.SetActive(false);
+
+		// unfreeze rigidbodies
+		for (int i = 0; i < controllers.Count; i++)
+			controllers[i].GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+
+		// begin the timer
+		TimerController.instance.BeginTimer();
+	}
+
+	public void EndGame()
+	{
+		// if server then send end message and 'true' scores to clients
+		if (NetworkManager.Singleton.IsServer)
+		{
+			Debug.Log("Server EndGame()");
+			List<ulong> netObjs = new List<ulong>();
+			List<ulong> scores = new List<ulong>();
+
+			// calculate true scores
+			builderScript.GetScores(ref netObjs, ref scores);
+
+			// broadcast end message
+			NetworkInterface.Instance.BroadcastEndMessage(netObjs, scores);
+		}
+
+		// re-freeze rigidbodies
+		for (int i = 0; i < controllers.Count; i++)
+			controllers[i].GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+
+		_gameStarted = false;
+	}
+
+	public void DisplayFinalScores(List<ulong> netObjs, List<ulong> scores)
+	{
+		// initial text
+		string display = "<b><u>Scores</u></b>";
+
+		for (int i = 0; i < netObjs.Count; i++)
+			display += "\nPlayer " + netObjs[i] + ": " + scores[i];
+
+		endText.transform.parent.gameObject.SetActive(true);
+		endText.text = display;
+	}
 
 	// join server
 	public void Join()

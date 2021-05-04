@@ -31,9 +31,10 @@ public class TimerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (elapsedTime >= 60.0f && isTimerPlaying) 
+        if (elapsedTime >= 20.0f && isTimerPlaying) 
         {
             EndTimer();
+			GameObject.FindGameObjectWithTag("GameManager").GetComponent<NetworkedGameManager>().EndGame();
         }
     }
 

@@ -11,6 +11,9 @@ public class PlatformClaim : MonoBehaviour
     //private ulong pOwner;
     public int platformIndex;
     Color playerClaim;
+
+	public PlayerScript POwner => pOwner;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,7 +28,7 @@ public class PlatformClaim : MonoBehaviour
 
     public void SetOwner(PlayerScript playerHit) 
     {
-        Debug.Log("SetOwnerCalled");
+        //Debug.Log("SetOwnerCalled");
         if (pOwner != null) 
         {
             pOwner.playerScore -= 1;
@@ -64,12 +67,12 @@ public class PlatformClaim : MonoBehaviour
         {
             SetOwner(hit);
             NetworkInterface.Instance.BroadcastMapEvent(hit.playerID, platformIndex);
-            Debug.Log("Unowned Collidision");
+            //Debug.Log("Unowned Collidision");
             
         }
         else 
         {
-            Debug.Log("Owned Collision");
+            //Debug.Log("Owned Collision");
         }
 
         /*if (pOwner == hit.playerID)

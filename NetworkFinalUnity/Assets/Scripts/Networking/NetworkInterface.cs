@@ -27,7 +27,8 @@ public enum MessageType
 	MAP_EVENT,		// sending a map event (cell change)
 	PLAYER_COLOR,	// sending a controllers color
 	REQUEST_COLORS,	// requesting/sending all colors
-	GAME_START,		// server telling client the game started
+	GAME_START,     // server telling client the game started
+	GAME_END		// server telling client the game ended
 }
 
 public class NetworkInterface : MonoBehaviour
@@ -84,10 +85,17 @@ public class NetworkInterface : MonoBehaviour
 			case MessageType.REQUEST_COLORS:
 				HandleColorRequest(clientid, reader);
 				break;
+			case MessageType.GAME_START:
+				HandleGameStartMessage(clientid, reader);
+				break;
+			case MessageType.GAME_END:
+				ReceiveEndGame(clientid, reader);
+				break;
 		}
 	}
 
-	// determines how a color request is handled
+	// - handlers if message type is interpreted differently by server v client - //
+	// handle color request response
 	private void HandleColorRequest(ulong clientid, NetworkReader stream)
 	{
 		// if color request message received by server, send colors to sender
@@ -100,7 +108,19 @@ public class NetworkInterface : MonoBehaviour
 			ReceiveAllColors(clientid, stream);
 		}
 	}
-
+	// handle game start message response 
+	private void HandleGameStartMessage(ulong clientid, NetworkReader stream)
+	{
+		// if color request message received by server, send colors to sender
+		if (NetworkManager.Singleton.IsServer)
+		{
+			_manager.TryStartGame();
+		}
+		else // otherwise, process the recieved colors
+		{
+			_manager.StartGame();
+		}
+	}
 
 
 	/* - Broadcast data to all connected clients - */
@@ -155,7 +175,7 @@ public class NetworkInterface : MonoBehaviour
 		// send message to all connected clients
 		CustomMessagingManager.SendUnnamedMessage(clientIds, buffer, NetworkChannel.DefaultMessage);
 	}
-	// Broadcast player spatial
+	// (server) broadcast player spatial data to all clients
 	public void BroadcastPlayerSpatial(ulong netObjId, Transform t)
 	{
 		NetworkBuffer buffer = new NetworkBuffer();
@@ -189,7 +209,7 @@ public class NetworkInterface : MonoBehaviour
 
 		//_messageLog.text = "Pos: " + pos.ToString("F4") + "\nRot: " + t.rotation.ToString("F4");
 	}
-
+	// (server) broadcast a player's color to all clients
 	public void BroadcastPlayerColor(ulong netObjId, Color color)
 	{
 		NetworkBuffer buffer = new NetworkBuffer();
@@ -216,6 +236,60 @@ public class NetworkInterface : MonoBehaviour
 		CustomMessagingManager.SendUnnamedMessage(clientIds, buffer, NetworkChannel.DefaultMessage);
 
 		_messageLog.text = color.ToString();
+	}
+	// (server) broadcast game start message to clients
+	public void BroadcastStartMessage()
+	{
+		NetworkBuffer buffer = new NetworkBuffer();
+		NetworkWriter writer = new NetworkWriter(buffer);
+
+		// message type => 4 bits
+		writer.WriteNibble((byte)MessageType.GAME_START);
+
+		// get all of the client ids
+		List<NetworkClient> clients = NetworkManager.Singleton.ConnectedClientsList;
+
+		// turn to list of client ids
+		List<ulong> clientIds = new List<ulong>();
+		foreach (NetworkClient client in clients)
+			clientIds.Add(client.ClientId);
+
+		// send message to all connected clients
+		CustomMessagingManager.SendUnnamedMessage(clientIds, buffer, NetworkChannel.DefaultMessage);
+	}
+	// (server) broadcast game end message to clients
+	public void BroadcastEndMessage(List<ulong> netObjs, List<ulong> scores)
+	{
+		// - package the data - //
+		NetworkBuffer buffer = new NetworkBuffer();
+		NetworkWriter writer = new NetworkWriter(buffer);
+		
+		// message type => 4 bits
+		writer.WriteNibble((byte)MessageType.GAME_END);
+		// number of scores to expect => 4 bits
+		writer.WriteNibble((byte)netObjs.Count);
+
+		// loop thru adding all clients
+		for (int i = 0; i < netObjs.Count; i++)
+		{
+			// net obj id => 4 bits
+			writer.WriteNibble((byte)netObjs[i]);
+			// score => 8 bits (max score of 256)
+			writer.WriteByte((byte)scores[i]);
+		}
+
+		// get all of the client ids
+		List<NetworkClient> clients = NetworkManager.Singleton.ConnectedClientsList;
+
+		// turn to list of client ids
+		List<ulong> clientIds = new List<ulong>();
+		foreach (NetworkClient client in clients)
+			clientIds.Add(client.ClientId);
+
+		Debug.Log("broadcasting scores to " + clients.Count);
+
+		// broadcast to everyone
+		CustomMessagingManager.SendUnnamedMessage(clientIds, buffer, NetworkChannel.DefaultMessage);
 	}
 
 
@@ -273,7 +347,7 @@ public class NetworkInterface : MonoBehaviour
 
 		_manager.UpdateClientMap(netObjID, cell);
 
-		Debug.Log("Recieved input from p " + cell + ": " + netObjID);
+		//Debug.Log("Recieved input from p " + cell + ": " + netObjID);
 		//_messageLog.text = "Map evt: " + cell;
 	}
 	// recieve specific controller color
@@ -355,6 +429,28 @@ public class NetworkInterface : MonoBehaviour
 		// send data to manager to update
 		_manager.UpdateClientColors(clients, colors);
 	}
+	// (client) receiving end game scores
+	private void ReceiveEndGame(ulong clientid, NetworkReader stream)
+	{
+		// lists to hold the data in
+		List<ulong> clients = new List<ulong>();
+		List<ulong> scores = new List<ulong>();
+
+		// number of colors to expect => 4 bits
+		int numScores = stream.ReadNibble();
+
+		// loop thru adding all clients
+		for (int i = 0; i < numScores; i++)
+		{
+			// get the net obj id
+			clients.Add(stream.ReadNibble());
+			// get the score
+			scores.Add((ulong)stream.ReadByte());
+		}
+
+		// send data to manager to update
+		_manager.DisplayFinalScores(clients, scores);
+	}
 
 
 	/* - public functions for players to send info to server - */
@@ -387,7 +483,20 @@ public class NetworkInterface : MonoBehaviour
 
 		CustomMessagingManager.SendUnnamedMessage(target, buffer, NetworkChannel.DefaultMessage);
 	}
+	// (client) requesting the game to start
+	public void SendStartRequestToServer(ulong target)
+	{
+		NetworkBuffer buffer = new NetworkBuffer();
+		NetworkWriter writer = new NetworkWriter(buffer);
 
+		// message type => 4 bits
+		writer.WriteNibble((byte)MessageType.GAME_START);
+
+		// no other data required ...
+
+		CustomMessagingManager.SendUnnamedMessage(target, buffer, NetworkChannel.DefaultMessage);
+	}
+	
 
 	/* - Compression/quantization helpers - */
 	const float posMin = -15f;
