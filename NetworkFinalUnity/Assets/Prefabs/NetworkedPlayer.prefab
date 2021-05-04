@@ -130,6 +130,8 @@ MonoBehaviour:
   player: {fileID: 2667583529377817215}
   playerID: 0
   generatedColor: {r: 0, g: 0, b: 0, a: 0}
+  playerScore: 0
+  scoreText: {fileID: 0}
 --- !u!114 &2667583529377817214
 MonoBehaviour:
   m_ObjectHideFlags: 0

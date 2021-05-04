@@ -3,6 +3,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlatformClaim : MonoBehaviour
 {
@@ -28,12 +29,19 @@ public class PlatformClaim : MonoBehaviour
         if (pOwner != null) 
         {
             pOwner.playerScore -= 1;
+            pOwner.UpdateScoreText();
         }
         pOwner = playerHit;
         playerHit.playerScore += 1;
+        playerHit.UpdateScoreText();
         playerClaim = playerHit.generatedColor;
         var tileRenderer = this.GetComponent<Renderer>();
         tileRenderer.material.SetColor("_Color", playerClaim);
+
+        //elapsedTime += Time.deltaTime;
+        //timePlaying = TimeSpan.FromSeconds(elapsedTime);
+        //string timePlayingStr = "Time: " + timePlaying.ToString("mm':'ss'.'ff");
+        //timer.text = timePlayingStr;
         //tileRenderer.material.SetColor("_Color", Color.black);
         /*Debug.Log("SetOwnerCalled");
         pOwner = playerHit.playerID;
