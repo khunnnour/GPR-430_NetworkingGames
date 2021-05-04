@@ -32,15 +32,10 @@ public class NetworkedPlayerController : NetworkBehaviour
 		_rb = GetComponent<Rigidbody>();
 		_lastInput ^= _lastInput; // clear last input
 
-		/*if (IsOwner)
+		if (IsOwner)//if this controller is owned by the connection
 		{
-			_infoText = GameObject.FindGameObjectWithTag("InfoPanel").GetComponent<Text>();
-			_infoText.text =
-				"OwnerClientId: " + OwnerClientId +
-				"\nNetworkObjectID: " + NetworkObjectId +
-				"\nLocalClientId: " + NetworkManager.Singleton.LocalClientId +
-				"\nServerClientId: " + NetworkManager.Singleton.ServerClientId;
-		}*/
+			//NetworkInterface.Instance
+		}
 
 		_serverID = NetworkManager.Singleton.ServerClientId;
 

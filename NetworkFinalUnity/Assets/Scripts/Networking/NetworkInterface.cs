@@ -22,10 +22,12 @@ public enum PlayerInput
 
 public enum MessageType
 {
-	PLAYER_INPUT,
-	PLAYER_SPATIAL,
-	MAP_EVENT,
-	PLAYER_COLOR
+	PLAYER_INPUT,	// sending a controllers last input
+	PLAYER_SPATIAL, // sending an objects position
+	MAP_EVENT,		// sending a map event (cell change)
+	PLAYER_COLOR,	// sending a controllers color
+	REQUEST_COLORS,	// requesting/sending all colors
+	GAME_START,		// server telling client the game started
 }
 
 public class NetworkInterface : MonoBehaviour
@@ -79,8 +81,27 @@ public class NetworkInterface : MonoBehaviour
 			case MessageType.PLAYER_COLOR:
 				ReceivePlayerColor(clientid, reader);
 				break;
+			case MessageType.REQUEST_COLORS:
+				HandleColorRequest(clientid, reader);
+				break;
 		}
 	}
+
+	// determines how a color request is handled
+	private void HandleColorRequest(ulong clientid, NetworkReader stream)
+	{
+		// if color request message received by server, send colors to sender
+		if (NetworkManager.Singleton.IsServer)
+		{
+			ReceiveAllColorRequest(clientid, stream);
+		}
+		else // otherwise, process the recieved colors
+		{
+			ReceiveAllColors(clientid, stream);
+		}
+	}
+
+
 
 	/* - Broadcast data to all connected clients - */
 	public void BroadcastMapEvent(ulong netObjId, int cell)
@@ -178,7 +199,7 @@ public class NetworkInterface : MonoBehaviour
 		writer.WriteNibble((byte)MessageType.PLAYER_COLOR);
 		// net obj id => 4 bits
 		writer.WriteNibble((byte)netObjId);
-		// pos => 3*13 bits
+		// color => 3*13 bits
 		writer.WriteByte((byte)CompressColorValue(color.r, 8));
 		writer.WriteByte((byte)CompressColorValue(color.g, 8));
 		writer.WriteByte((byte)CompressColorValue(color.b, 8));
@@ -199,6 +220,7 @@ public class NetworkInterface : MonoBehaviour
 
 
 	/* - private handlers for when messages are received - */
+	// receiving a controller'sinput (either direction)
 	private void ReceivePlayerInput(ulong clientid, NetworkReader stream)
 	{
 		//NetworkReader reader = new NetworkReader(stream);
@@ -217,7 +239,7 @@ public class NetworkInterface : MonoBehaviour
 	{
 		// read in player index
 		ulong netObjID = stream.ReadNibble();
-		
+
 		// read in position
 		int compPosVal = (int)stream.ReadBits(13);
 		float posX = DecompressPositionValue(compPosVal, 13);
@@ -254,7 +276,7 @@ public class NetworkInterface : MonoBehaviour
 		Debug.Log("Recieved input from p " + cell + ": " + netObjID);
 		//_messageLog.text = "Map evt: " + cell;
 	}
-
+	// recieve specific controller color
 	private void ReceivePlayerColor(ulong clientid, NetworkReader stream)
 	{
 		// read in player index
@@ -274,6 +296,44 @@ public class NetworkInterface : MonoBehaviour
 		//Debug.Log("Spatial from " + clientid + ": " + pos);
 		_messageLog.text = plColor.ToString();
 	}
+	// (server) receive color request
+	private void ReceiveAllColorRequest(ulong clientid, NetworkReader stream)
+	{
+		// read in player index
+		ulong netObjID = stream.ReadNibble();
+
+		List<ulong> clients = new List<ulong>();
+		List<Color> colors = new List<Color>();
+		// get the info from game manager
+		_manager.RetrieveClientColors(ref clients, ref colors);
+
+		// - package the data - //
+		NetworkBuffer buffer = new NetworkBuffer();
+		NetworkWriter writer = new NetworkWriter(buffer);
+		// message type => 4 bits
+		writer.WriteNibble((byte)MessageType.REQUEST_COLORS);
+		// number of colors to expect => 4 bits
+		writer.WriteNibble((byte)clients.Count);
+
+		// loop thru adding all clients
+		for (int i = 0; i < clients.Count; i++)
+		{
+			// net obj id => 4 bits
+			writer.WriteNibble((byte)clients[i]);
+			// color => 3*13 bits
+			writer.WriteByte((byte)CompressColorValue(colors[i].r, 8));
+			writer.WriteByte((byte)CompressColorValue(colors[i].g, 8));
+			writer.WriteByte((byte)CompressColorValue(colors[i].b, 8));
+		}
+
+		// send off to requestee
+	}
+	// (client) receiving all colors
+	private void ReceiveAllColors(ulong clientid, NetworkReader stream)
+	{
+
+	}
+
 
 	/* - public functions for players to send info to server - */
 	public void SendPlayerInputToServer(ulong target, ulong netObjId, PlayerInput input)
@@ -292,35 +352,31 @@ public class NetworkInterface : MonoBehaviour
 		CustomMessagingManager.SendUnnamedMessage(target, buffer, NetworkChannel.DefaultMessage);
 	}
 
-	//public void SendPlayerSpatialToServer(ulong target, ulong netObjId, Transform t)
-	//{
-	//	NetworkBuffer buffer = new NetworkBuffer();
-	//	NetworkWriter writer = new NetworkWriter(buffer);
-	//
-	//	// message type => 4 bits
-	//	writer.WriteNibble((byte)MessageType.PLAYER_SPATIAL);
-	//	// net obj id => 4 bits
-	//	writer.WriteNibble((byte)netObjId);
-	//	// pos => 3*13 bits
-	//	Vector3 pos = t.position;
-	//	writer.WriteBits(CompressPositionValue(pos.x, 13), 13);
-	//	writer.WriteBits(CompressPositionValue(pos.y, 13), 13);
-	//	writer.WriteBits(CompressPositionValue(pos.z, 13), 13);
-	//	// rot => 3*13 bits
-	//
-	//	CustomMessagingManager.SendUnnamedMessage(target, buffer, NetworkChannel.DefaultMessage);
-	//}
+	// client requesting all controller colors
+	public void SendColorRequest(ulong target)
+	{
+		NetworkBuffer buffer = new NetworkBuffer();
+		NetworkWriter writer = new NetworkWriter(buffer);
+
+		// message type => 4 bits
+		writer.WriteNibble((byte)MessageType.REQUEST_COLORS);
+
+		// no other data required ...
+
+		CustomMessagingManager.SendUnnamedMessage(target, buffer, NetworkChannel.DefaultMessage);
+	}
 
 
+	/* - Compression/quantization helpers - */
 	const float posMin = -15f;
 	const float posMax = 25f;
-	const float posRange = posMax- posMin;
+	const float posRange = posMax - posMin;
 	private ulong CompressPositionValue(float val, int bits)
 	{
 		int maxVal = (2 << (bits - 1)) - 1;
-		float serial = (val- posMin); // get make so min value is 0
+		float serial = (val - posMin); // get make so min value is 0
 		float ratio = serial / posRange; // divide by whole range
-		ulong compressed=(ulong)Mathf.RoundToInt(ratio * (float)maxVal); // convert to integer
+		ulong compressed = (ulong)Mathf.RoundToInt(ratio * (float)maxVal); // convert to integer
 		return compressed;
 	}
 	private float DecompressPositionValue(int val, int bits)
@@ -346,7 +402,7 @@ public class NetworkInterface : MonoBehaviour
 		return ratio;
 	}
 
-	private ulong CompressColorValue(float val, int bits) 
+	private ulong CompressColorValue(float val, int bits)
 	{
 		int maxVal = (2 << (bits - 1)) - 1;
 		ulong compressed = (ulong)Mathf.RoundToInt(val * (float)maxVal);
