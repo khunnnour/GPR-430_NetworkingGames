@@ -299,9 +299,6 @@ public class NetworkInterface : MonoBehaviour
 	// (server) receive color request
 	private void ReceiveAllColorRequest(ulong clientid, NetworkReader stream)
 	{
-		// read in player index
-		ulong netObjID = stream.ReadNibble();
-
 		List<ulong> clients = new List<ulong>();
 		List<Color> colors = new List<Color>();
 		// get the info from game manager
@@ -327,11 +324,36 @@ public class NetworkInterface : MonoBehaviour
 		}
 
 		// send off to requestee
+		CustomMessagingManager.SendUnnamedMessage(clientid, buffer, NetworkChannel.DefaultMessage);
 	}
 	// (client) receiving all colors
 	private void ReceiveAllColors(ulong clientid, NetworkReader stream)
 	{
+		// lists to hold the data in
+		List<ulong> clients = new List<ulong>();
+		List<Color> colors = new List<Color>();
 
+		// number of colors to expect => 4 bits
+		int numColors = stream.ReadNibble();
+
+		// loop thru adding all clients
+		for (int i = 0; i < numColors; i++)
+		{
+			// get the net obj id
+			clients.Add(stream.ReadNibble());
+			// get the color
+			int compColorVal = (int)stream.ReadByte();
+			float colR = DecompressColorValue(compColorVal, 8);
+			compColorVal = (int)stream.ReadByte();
+			float colG = DecompressColorValue(compColorVal, 8);
+			compColorVal = (int)stream.ReadByte();
+			float colB = DecompressColorValue(compColorVal, 8);
+			Color plColor = new Color(colR, colG, colB);
+			colors.Add(plColor);
+		}
+
+		// send data to manager to update
+		_manager.UpdateClientColors(clients, colors);
 	}
 
 

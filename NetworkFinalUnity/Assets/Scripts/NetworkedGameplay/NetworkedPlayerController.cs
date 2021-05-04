@@ -34,7 +34,8 @@ public class NetworkedPlayerController : NetworkBehaviour
 
 		if (IsOwner)//if this controller is owned by the connection
 		{
-			//NetworkInterface.Instance
+			//_infoText.text = "sent color request";
+			NetworkInterface.Instance.SendColorRequest(_serverID);
 		}
 
 		_serverID = NetworkManager.Singleton.ServerClientId;

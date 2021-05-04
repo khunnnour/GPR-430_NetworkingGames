@@ -169,6 +169,29 @@ public class NetworkedGameManager : MonoBehaviour
 			}
 		}
 	}
+	public void UpdateClientColors(List<ulong> netObjIds, List<Color> colors)
+	{
+		// get controller from list
+		for (int i = 0; i < controllers.Count; i++)
+		{
+			// check if player is still connected
+			if (!controllers[i])
+			{
+				// remove it from the list and skip
+				controllers.RemoveAt(i);
+				continue;
+			}
+
+			int contIndex = netObjIds.IndexOf(controllers[i].NetworkObjectId);
+			if(contIndex != -1)
+			{
+				controllers[i].GetComponent<PlayerScript>().generatedColor = colors[contIndex];
+				//controllers[i].GetComponent<PlayerScript>().playerColor = color;
+				controllers[i].GetComponent<PlayerScript>().UpdateColor();
+			}
+		}
+	}
+
 
 	/// <summary>
 	/// for collecting the colors of connected controllers to send to a new client
