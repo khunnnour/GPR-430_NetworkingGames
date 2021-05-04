@@ -195,7 +195,7 @@ public class NetworkedGameManager : MonoBehaviour
 		}
 	}
 
-	void OnGUI()
+	/*void OnGUI()
 	{
 		GUILayout.BeginArea(new Rect(10, 10, 300, 300));
 		if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
@@ -214,7 +214,7 @@ public class NetworkedGameManager : MonoBehaviour
 	{
 		if (GUILayout.Button("Client")) NetworkManager.Singleton.StartClient();
 		if (GUILayout.Button("Server")) NetworkManager.Singleton.StartServer();
-	}
+	}*/
 
 	// join server
 	public void Join()
