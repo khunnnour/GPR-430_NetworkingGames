@@ -216,11 +216,7 @@ public class NetworkedGameManager : MonoBehaviour
 	}
 
 
-	/// <summary>
-	/// for collecting the colors of connected controllers to send to a new client
-	/// </summary>
-	/// <param name="netObjIds">List to fill w net object ids</param>
-	/// <param name="colors">List to fill w colors</param>
+	// for collecting the colors of connected controllers to send to a new client
 	public void RetrieveClientColors(ref List<ulong> netObjIds, ref List<Color> colors)
 	{
 		// cycle thru all controllers
@@ -240,27 +236,6 @@ public class NetworkedGameManager : MonoBehaviour
 			colors.Add(controllers[i].GetComponent<PlayerScript>().generatedColor);
 		}
 	}
-
-	/*void OnGUI()
-	{
-		GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-		if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
-		{
-			StartButtons();
-		}
-		else
-		{
-			StatusLabels();
-		}
-
-		GUILayout.EndArea();
-	}
-
-	static void StartButtons()
-	{
-		if (GUILayout.Button("Client")) NetworkManager.Singleton.StartClient();
-		if (GUILayout.Button("Server")) NetworkManager.Singleton.StartServer();
-	}*/
 
 	// (client) send start game message
 	public void SendStartRequest()

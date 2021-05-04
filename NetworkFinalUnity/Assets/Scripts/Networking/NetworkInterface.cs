@@ -175,6 +175,7 @@ public class NetworkInterface : MonoBehaviour
 		// send message to all connected clients
 		CustomMessagingManager.SendUnnamedMessage(clientIds, buffer, NetworkChannel.DefaultMessage);
 	}
+
 	// (server) broadcast player spatial data to all clients
 	public void BroadcastPlayerSpatial(ulong netObjId, Transform t)
 	{
@@ -504,18 +505,18 @@ public class NetworkInterface : MonoBehaviour
 	const float posRange = posMax - posMin;
 	private ulong CompressPositionValue(float val, int bits)
 	{
-		int maxVal = (2 << (bits - 1)) - 1;
-		float serial = (val - posMin); // get make so min value is 0
-		float ratio = serial / posRange; // divide by whole range
+		int maxVal = (2 << (bits - 1)) - 1; // bitshift to get max value for desired number of bits
+		float serial = (val - posMin);		// make so min value is 0
+		float ratio = serial / posRange;	// divide by whole range
 		ulong compressed = (ulong)Mathf.RoundToInt(ratio * (float)maxVal); // convert to integer
 		return compressed;
 	}
 	private float DecompressPositionValue(int val, int bits)
 	{
-		int maxVal = (2 << (bits - 1)) - 1; // bitshift to get max value in provided number of bits
-		float ratio = (float)val / (float)maxVal; // get the ratio
-		float serial = ratio * posRange; // get the serialized value
-		float ret = serial + posMin; // convert back to actual value
+		int maxVal = (2 << (bits - 1)) - 1; 
+		float ratio = (float)val / (float)maxVal;	// get the ratio
+		float serial = ratio * posRange;			// get the serialized value
+		float ret = serial + posMin;				// convert back to actual value
 		return ret;
 	}
 

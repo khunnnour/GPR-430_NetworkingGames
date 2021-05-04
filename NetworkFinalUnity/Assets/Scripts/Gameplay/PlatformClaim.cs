@@ -74,17 +74,5 @@ public class PlatformClaim : MonoBehaviour
         {
             //Debug.Log("Owned Collision");
         }
-
-        /*if (pOwner == hit.playerID)
-        {
-            Debug.Log("Owned Collision");
-        }
-        else
-        {
-            SetOwner(hit);
-            NetworkInterface.Instance.BroadcastMapEvent(hit.playerID, platformIndex);
-            Debug.Log("Unowned Collidision");
-        }*/
-
     }
 }
